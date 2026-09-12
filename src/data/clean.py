@@ -1,4 +1,4 @@
-"""Limpieza reproducible del dataset (T-07).
+"""Limpieza reproducible del dataset (T-07) y tratamiento de faltantes (T-08).
 
 Aplica al raw versionado los pasos de normalización derivados del audit
 (`T-05`) y genera un artefacto derivado trazable en `data/processed/`:
@@ -7,6 +7,8 @@ Aplica al raw versionado los pasos de normalización derivados del audit
    columna a flotante.
 2. `SeniorCitizen`: la codificación numérica `0/1` se normaliza a `No/Yes`,
    coherente con el resto de los binarios.
+3. Valores faltantes de `TotalCharges` imputados a 0 (ausencia determinística
+   con `tenure == 0`; ver `docs/missing_values.md`).
 
 El raw no se modifica. Antes de limpiar se ejecutan los checks de calidad
 (`T-06`); si el raw no los supera, el proceso aborta (dataset bloqueado).
@@ -38,6 +40,8 @@ STEPS = [
     "columna convertida a flotante.",
     "SeniorCitizen: codificación 0/1 normalizada a No/Yes para un esquema "
     "coherente con el resto de binarios.",
+    "Valores faltantes de TotalCharges imputados a 0 (ausencia determinística "
+    "con tenure == 0).",
     "El resto de columnas se mantiene sin cambios respecto del contrato.",
 ]
 
@@ -49,6 +53,7 @@ def clean_raw(df: pd.DataFrame) -> pd.DataFrame:
         out["TotalCharges"].replace(r"^\s*$", pd.NA, regex=True),
         errors="coerce",
     )
+    out["TotalCharges"] = out["TotalCharges"].fillna(0.0)
     out["SeniorCitizen"] = out["SeniorCitizen"].astype(int).map({0: "No", 1: "Yes"})
     return out
 

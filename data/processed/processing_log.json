@@ -3,14 +3,15 @@
   "input_file": "data\\raw\\Telco-Customer-Churn.csv",
   "input_sha256": "16320c9c1ec72448db59aa0a26a0b95401046bef5d02fd3aeb906448e3055e91",
   "output_file": "data\\processed\\churn_cleaned.csv",
-  "output_sha256": "821a38cb2720fccb04535621118549eff2042b868cd92a28e0b4b119950bab06",
+  "output_sha256": "5a75bec3a2eeb24b74b55baa14d7035d37aab769bc205013ff1daf69bad451d2",
   "rows": 7043,
   "columns": 21,
   "seed": 42,
   "steps": [
     "TotalCharges: celdas de solo espacios convertidas a ausencia (NaN) y columna convertida a flotante.",
     "SeniorCitizen: codificación 0/1 normalizada a No/Yes para un esquema coherente con el resto de binarios.",
+    "Valores faltantes de TotalCharges imputados a 0 (ausencia determinística con tenure == 0).",
     "El resto de columnas se mantiene sin cambios respecto del contrato."
   ],
-  "created_at": "2026-09-12T18:44:49+00:00"
+  "created_at": "2026-09-12T18:47:32+00:00"
 }

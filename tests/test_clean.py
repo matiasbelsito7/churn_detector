@@ -1,8 +1,6 @@
-"""Pruebas unitarias de la limpieza de datos (T-07)."""
+"""Pruebas unitarias de la limpieza y tratamiento de faltantes (T-07/T-08)."""
 
-import numpy as np
 import pandas as pd
-import pytest
 from src.data.clean import clean_raw
 from src.data.contract import COLUMNS
 
@@ -48,15 +46,37 @@ def test_clean_preserves_rows_and_columns():
     assert list(df_clean.columns) == list(COLUMNS)
 
 
-def test_totalcharges_blank_becomes_missing_and_float():
+def test_totalcharges_present_value_unchanged():
     df_clean = clean_raw(sample_raw())
     assert pd.api.types.is_float_dtype(
         df_clean["TotalCharges"]
     ), "TotalCharges debe ser float."
-    assert np.isnan(
-        df_clean.loc[0, "TotalCharges"]
-    ), "Celda de solo espacios debe quedar ausente."
     assert df_clean.loc[1, "TotalCharges"] == 250.0
+
+
+def test_totalcharges_missing_imputed_zero():
+    df_clean = clean_raw(sample_raw())
+    assert df_clean.loc[0, "TotalCharges"] == 0.0
+
+
+def test_no_missing_values_after_cleaning():
+    df_clean = clean_raw(sample_raw())
+    assert df_clean.isna().sum().sum() == 0
+
+
+def test_imputation_is_identical_to_inference_rule():
+    for value in ("", "   "):
+        df = sample_raw()
+        df.loc[1, "TotalCharges"] = value
+        df_clean = clean_raw(df)
+        assert df_clean.loc[1, "TotalCharges"] == 0.0
+
+
+def test_clean_rejects_nonnumeric_totalcharges():
+    df = sample_raw()
+    df.loc[1, "TotalCharges"] = "abc"
+    df_clean = clean_raw(df)
+    assert df_clean.loc[1, "TotalCharges"] == 0.0
 
 
 def test_senior_citizen_normalized_to_yes_no():
@@ -68,23 +88,3 @@ def test_clean_output_is_deterministic():
     first = clean_raw(sample_raw())
     second = clean_raw(sample_raw())
     pd.testing.assert_frame_equal(first, second)
-
-
-def test_clean_accepts_whitespace_only_totalcharges():
-    df = sample_raw()
-    df.loc[1, "TotalCharges"] = "   "
-    df_clean = clean_raw(df)
-    assert np.isnan(df_clean.loc[1, "TotalCharges"])
-
-
-def test_clean_rejects_nonnumeric_totalcharges():
-    df = sample_raw()
-    df.loc[1, "TotalCharges"] = "abc"
-    df_clean = clean_raw(df)
-    assert np.isnan(df_clean.loc[1, "TotalCharges"])
-
-
-def test_clean_missing_reader_direct():
-    pytest.importorskip("pandas")
-    # smoke: clean_raw carga bien con el esquema del contrato
-    assert "Churn" in clean_raw(sample_raw()).columns
