@@ -91,8 +91,8 @@ no las satisface **no avanza** a la fase de limpieza/modelado
 ## 5. Estado de las ausencias
 
 El raw no contiene valores nulos textuales en ninguna columna, pero
-`TotalCharges` está almacenado como texto y presenta **11 cadenas vacías**
-equivalentes a ausencia, todas con `tenure == 0`. Estas ausencias son
-**estructurales** (dependen de la lógica del negocio), no aleatorias. Su
+`TotalCharges` está almacenado como texto y presenta **11 celdas de solo
+espacios** equivalentes a ausencia, todas con `tenure == 0`. Estas ausencias
+son **estructurales** (dependen de la lógica del negocio), no aleatorias. Su
 tratamiento se define en `T-08` con justificación basada en datos. Este
 hallazgo se documenta formalmente en el audit (`T-05`).

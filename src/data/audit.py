@@ -195,9 +195,9 @@ def audit(df: pd.DataFrame) -> str:
     if df["TotalCharges"].dtype == object:
         findings.append(
             f"- `TotalCharges` se almacena como texto con "
-            f"{int(numeric_column(df['TotalCharges']).isna().sum())} cadenas "
-            "vacías (ausencia estructural, todas con `tenure == 0`). Debe "
-            "convertirse a flotante en `T-07`."
+            f"{int(numeric_column(df['TotalCharges']).isna().sum())} celdas no "
+            "numéricas (solo espacios), todas con `tenure == 0` (ausencia "
+            "estructural, no aleatoria). Debe convertirse a flotante en `T-07`."
         )
     findings.append(
         "- `SeniorCitizen` usa codificación numérica `0/1` mientras el resto de "

@@ -91,7 +91,7 @@ Informe generado automáticamente desde el raw versionado.
 
 ## 5. Resumen de hallazgos
 
-- `TotalCharges` se almacena como texto con 11 cadenas vacías (ausencia estructural, todas con `tenure == 0`). Debe convertirse a flotante en `T-07`.
+- `TotalCharges` se almacena como texto con 11 celdas no numéricas (solo espacios), todas con `tenure == 0` (ausencia estructural, no aleatoria). Debe convertirse a flotante en `T-07`.
 - `SeniorCitizen` usa codificación numérica `0/1` mientras el resto de los binarios usa `No/Yes`; normalizar en `T-07` para un esquema consistente.
 
 ## 6. Desbalanceo del target
