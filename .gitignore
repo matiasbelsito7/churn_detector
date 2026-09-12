@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+*.whl
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Testing y calidad
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.coverage.*
+.coverage.*
+hypothesis/
+
+# Cuadernos
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+
+# Datos: nunca versionar secretos ni artefactos derivados ajenos al repo
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+
+# Bases de datos locales y binarios
+*.db
+*.sqlite
+*.csv.bak
+*.parquet.bak
+*.pkl
+*.joblib
+
+# Datos derivados tratados como residuales en locales de trabajo
+# (la política de versionado se define en docs/tasks.md, tarea T-03)
+/tmp_data/
+/logs/

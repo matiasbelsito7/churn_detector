@@ -1,0 +1,18 @@
+Genera un `constitution.md` para el proyecto de churn basado en IBM Telco Customer Churn.
+
+Define únicamente los principios y reglas que deben gobernar el desarrollo del proyecto. Incluye criterios como:
+
+- reproducibilidad;
+- trazabilidad de datos y modelos;
+- separación entre datos, lógica de negocio y modelos;
+- prevención de data leakage;
+- validación de calidad de datos;
+- tratamiento explícito y justificable de valores faltantes;
+- decisiones de preprocessing basadas en evidencia;
+- evaluación de modelos con métricas adecuadas al problema;
+- evitar complejidad tecnológica innecesaria;
+- código testeable, mantenible y documentado.
+
+Cada principio debe ser concreto y aplicable para decidir entre alternativas durante el desarrollo.
+
+No describas la arquitectura completa del sistema, no escribas requisitos funcionales detallados y no enumeres tareas de implementación.

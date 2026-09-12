@@ -1,0 +1,30 @@
+Genera un `specs.md` que defina la especificación funcional y técnica del proyecto.
+
+Proyecto:
+Sistema end-to-end de detección/predicción de churn utilizando IBM Telco Customer Churn.
+
+La especificación debe definir:
+- objetivo del sistema;
+- problema de negocio;
+- dataset y target;
+- flujo esperado desde datos crudos hasta predicción;
+- requisitos de data ingestion y curation;
+- requisitos de data quality;
+- tratamiento de missing values;
+- EDA requerido;
+- requisitos de feature engineering;
+- preprocessing;
+- entrenamiento y evaluación;
+- criterios de selección del modelo;
+- inferencia;
+- requisitos mínimos de API;
+- persistencia/SQL;
+- tracking de experimentos;
+- reproducibilidad;
+- testing;
+- monitoring;
+- criterios de aceptación.
+
+Describe qué debe cumplir el sistema, no cómo implementarlo.
+
+No conviertas el documento en una lista de tareas ni establezcas reglas generales de gobierno del proyecto; esas responsabilidades pertenecen a `tasks.md` y `constitution.md`.
