@@ -19,16 +19,12 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-try:
-    import pandas as pd
-except ImportError as exc:  # pragma: no cover
-    sys.exit(f"Falta dependencia pandas: {exc}")
+import pandas as pd
 
 from src.data.contract import (
     COLUMNS,
     INTERNET_DEPENDENT_FIELDS,
     SPECS,
-    TARGET,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -78,7 +74,11 @@ def check_domains(df: pd.DataFrame) -> CheckResult:
             continue
         series = df[name]
         unexpected = sorted(
-            {v for v in series.dropna().unique().tolist() if v not in (spec.allowed or ())},
+            {
+                v
+                for v in series.dropna().unique().tolist()
+                if v not in (spec.allowed or ())
+            },
             key=str,
         )
         if unexpected:
@@ -88,7 +88,10 @@ def check_domains(df: pd.DataFrame) -> CheckResult:
             problems.append(f"{name}: {n_missing} valores ausentes.")
     passed = not problems
     return CheckResult(
-        "R2", "Dominios categóricos", passed, " ".join(problems) or "Todos los dominios se respetan."
+        "R2",
+        "Dominios categóricos",
+        passed,
+        " ".join(problems) or "Todos los dominios se respetan.",
     )
 
 
@@ -111,22 +114,29 @@ def check_numeric(df: pd.DataFrame) -> CheckResult:
         non_null = num.dropna()
         if spec.minimum is not None and non_null.lt(spec.minimum).any():
             problems.append(
-                f"{name}: {int(non_null.lt(spec.minimum).sum())} valores bajo el mínimo {spec.minimum}."
+                f"{name}: {int(non_null.lt(spec.minimum).sum())} valores bajo el "
+                f"mínimo {spec.minimum}."
             )
         if spec.maximum is not None and non_null.gt(spec.maximum).any():
             problems.append(
-                f"{name}: {int(non_null.gt(spec.maximum).sum())} valores sobre el máximo {spec.maximum}."
+                f"{name}: {int(non_null.gt(spec.maximum).sum())} valores sobre el "
+                f"máximo {spec.maximum}."
             )
     passed = not problems
     return CheckResult(
-        "R3", "Números: parseo y rango", passed, " ".join(problems) or "Números válidos dentro de rango."
+        "R3",
+        "Números: parseo y rango",
+        passed,
+        " ".join(problems) or "Números válidos dentro de rango.",
     )
 
 
 def check_unique_ids(df: pd.DataFrame) -> CheckResult:
     ids = df["customerID"]
     n_dups = int(ids.duplicated().sum())
-    non_matching = int((~ids.astype(str).map(lambda v: bool(CUSTOMER_ID_PATTERN.match(v)))).sum())
+    non_matching = int(
+        (~ids.astype(str).map(lambda v: bool(CUSTOMER_ID_PATTERN.match(v)))).sum()
+    )
     passed = n_dups == 0 and non_matching == 0
     detail = "customerID único y con formato válido."
     if n_dups:
@@ -145,21 +155,28 @@ def check_no_duplicates(df: pd.DataFrame) -> CheckResult:
 
 def check_coherence(df: pd.DataFrame) -> CheckResult:
     problems: list[str] = []
-    inconsistent = df["MultipleLines"].eq("No phone service") != df["PhoneService"].eq("No")
+    inconsistent = df["MultipleLines"].eq("No phone service") != df["PhoneService"].eq(
+        "No"
+    )
     if inconsistent.any():
         problems.append(
-            f"{int(inconsistent.sum())} filas con MultipleLines/PhoneService incoherentes."
+            f"{int(inconsistent.sum())} filas con MultipleLines/PhoneService "
+            "incoherentes."
         )
     no_internet = df["InternetService"].eq("No")
     for field in INTERNET_DEPENDENT_FIELDS:
         inconsistent = df[field].eq("No internet service") != no_internet
         if inconsistent.any():
             problems.append(
-                f"{int(inconsistent.sum())} filas con {field}/InternetService incoherentes."
+                f"{int(inconsistent.sum())} filas con "
+                f"{field}/InternetService incoherentes."
             )
     passed = not problems
     return CheckResult(
-        "R6", "Coherencia entre campos", passed, " ".join(problems) or "Sin incoherencias entre campos."
+        "R6",
+        "Coherencia entre campos",
+        passed,
+        " ".join(problems) or "Sin incoherencias entre campos.",
     )
 
 
@@ -194,20 +211,30 @@ def run_all(df: pd.DataFrame) -> list[CheckResult]:
 
 def build_report(results: list[CheckResult], source: str) -> str:
     approved = all(r.passed for r in results)
+    status = (
+        "**APROBADO** — puede avanzar a la siguiente fase."
+        if approved
+        else "**RECHAZADO** — queda bloqueado para la siguiente fase."
+    )
     lines = [
         "# Informe de calidad de datos (T-06)",
         "",
         f"- **Fuente validada:** `{source}`",
-        f"- **Estado del dataset:** {'**APROBADO** — puede avanzar a la siguiente fase.' if approved else '**RECHAZADO** — queda bloqueado para la siguiente fase.'}",
+        f"- **Estado del dataset:** {status}",
         "",
         "| Regla | Descripción | Resultado | Detalle |",
         "|---|---|---|---|",
     ]
     for r in results:
         lines.append(
-            f"| {r.rule_id} | {r.name} | {'Pasa' if r.passed else '**Falla**'} | {r.details} |"
+            f"| {r.rule_id} | {r.name} | "
+            f"{'Pasa' if r.passed else '**Falla**'} | {r.details} |"
         )
-    lines += ["", f"Reglas cumplidas: {sum(r.passed for r in results)}/{len(results)}.", ""]
+    lines += [
+        "",
+        f"Reglas cumplidas: {sum(r.passed for r in results)}/{len(results)}.",
+        "",
+    ]
     return "\n".join(lines)
 
 
@@ -220,7 +247,9 @@ def main() -> int:
         encoding="utf-8",
     )
     for r in results:
-        print(f"[{'PASA' if r.passed else 'FALLA'}] {r.rule_id}: {r.name} — {r.details}")
+        print(
+            f"[{'PASA' if r.passed else 'FALLA'}] {r.rule_id}: {r.name} — {r.details}"
+        )
     approved = all(r.passed for r in results)
     print(f"Estado del dataset: {'APROBADO' if approved else 'RECHAZADO'}")
     return 0 if approved else 1

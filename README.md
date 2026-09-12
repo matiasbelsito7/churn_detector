@@ -44,6 +44,17 @@ tests/                Pruebas de las distintas capas.
 reports/              Informes generados (audit, calidad, EDA, monitoreo).
 ```
 
+## Entorno reproducible
+
+Se usa `uv` (Python >= 3.11). Para instalar el entorno desde cero:
+
+```powershell
+uv sync --extra dev
+```
+
+Las versiones exactas quedan fijadas en `uv.lock`. Las semillas aleatorias se
+centralizan en `src/seeds.py`.
+
 ## Estado
 
 En preparación. Las fases y tareas se definen en `docs/tasks.md`.

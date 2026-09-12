@@ -1,7 +1,6 @@
 """Pruebas unitarias de los checks de calidad de datos (T-06)."""
 
 import pandas as pd
-
 from src.data.contract import COLUMNS
 from src.data.quality_checks import run_all
 

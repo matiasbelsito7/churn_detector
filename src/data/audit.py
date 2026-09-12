@@ -12,10 +12,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-try:
-    import pandas as pd
-except ImportError as exc:  # pragma: no cover
-    sys.exit(f"Falta dependencia pandas: {exc}")
+import pandas as pd
 
 from src.data.contract import COLUMNS, INTERNET_DEPENDENT_FIELDS, SPECS, TARGET
 
@@ -87,7 +84,6 @@ def multivariate_checks(df: pd.DataFrame) -> list[str]:
 
 def audit(df: pd.DataFrame) -> str:
     expected_cols = list(COLUMNS)
-    actual_cols = list(df.columns)
     lines: list[str] = [
         "# Audit del dataset crudo (T-05)",
         "",
@@ -118,7 +114,11 @@ def audit(df: pd.DataFrame) -> str:
                     f"{desired} (antes: {inferred})**"
                 )
             elif spec.logical_type == "float" and df[col].dtype.kind in "if":
-                deviation = "No" if str(df[col].dtype) == "float64" else f"SÍ — dtype `{inferred}`"
+                deviation = (
+                    "No"
+                    if str(df[col].dtype) == "float64"
+                    else f"SÍ — dtype `{inferred}`"
+                )
             elif spec.logical_type == "int" and df[col].dtype.kind == "i":
                 deviation = "No"
             else:
@@ -205,7 +205,9 @@ def audit(df: pd.DataFrame) -> str:
         "consistente."
     )
     no_internet_map = {
-        f: int((df[f].eq("No internet service") != df["InternetService"].eq("No")).sum())
+        f: int(
+            (df[f].eq("No internet service") != df["InternetService"].eq("No")).sum()
+        )
         for f in INTERNET_DEPENDENT_FIELDS
     }
     if any(v for v in no_internet_map.values()):
@@ -226,7 +228,9 @@ def audit(df: pd.DataFrame) -> str:
         count = int(target_counts.get(cls, 0))
         pct = count / total * 100
         lines.append(f"- `{cls}`: {count} ({pct:.2f}%)")
-    lines.append(f"- Clase de interés (positiva): `Yes` ({target_counts.get('Yes', 0)}).")
+    lines.append(
+        f"- Clase de interés (positiva): `Yes` ({target_counts.get('Yes', 0)})."
+    )
     return "\n".join(lines)
 
 
