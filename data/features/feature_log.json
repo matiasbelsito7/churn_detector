@@ -1,0 +1,20 @@
+{
+  "task": "T-10",
+  "input_file": "data\\processed\\churn_cleaned.csv",
+  "input_sha256": "5a75bec3a2eeb24b74b55baa14d7035d37aab769bc205013ff1daf69bad451d2",
+  "output_file": "data\\features\\churn_features.csv",
+  "output_sha256": "ec292187261676b2a9ec3f7398e9b61f7c7f75218798d30ee67c6a336f6bbbfc",
+  "rows": 7043,
+  "columns": 28,
+  "features": [
+    "tenure_bin",
+    "is_new_client",
+    "is_month_to_month",
+    "is_electronic_check",
+    "is_fiber_optic",
+    "addon_missing_count",
+    "avg_monthly_charge_hist"
+  ],
+  "seed": 42,
+  "created_at": "2026-09-12T21:54:00+00:00"
+}

@@ -22,6 +22,7 @@ MLflow, API, Docker, testing, CI/CD y monitoring).
 | [docs/tasks.md](docs/tasks.md) | Roadmap de implementación con dependencias y criterios de completitud. |
 | [docs/data_contract.md](docs/data_contract.md) | Contrato y diccionario de datos del dataset de churn. |
 | [docs/missing_values.md](docs/missing_values.md) | Decisiones de tratamiento de valores faltantes, justificadas. |
+| [docs/feature_dictionary.md](docs/feature_dictionary.md) | Diccionario de features derivadas del EDA (T-10). |
 
 ## Estructura del repositorio
 
