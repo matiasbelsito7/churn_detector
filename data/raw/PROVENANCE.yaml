@@ -1,0 +1,22 @@
+# Registro de procedencia del dataset crudo (T-03)
+
+# Fuente del dataset
+dataset:
+  name: IBM Telco Customer Churn
+  source: https://www.ibm.com/communities/analytics/watson-analytics-blog/predictive-insights-in-the-telco-customer-churn-data-set/
+  repository_url: https://github.com/IBM/telco-customer-churn-on-icp4d
+  raw_url: https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv
+
+# Identidad del archivo crudo versionado
+raw_file:
+  path: data/raw/Telco-Customer-Churn.csv
+  size_bytes: 970457
+  rows: 7043
+  columns: 21
+  checksum_sha256: 16320C9C1EC72448DB59AA0A26A0B95401046BEF5D02FD3AEB906448E3055E91
+
+# Descarga
+download:
+  date: 2026-09-12
+  method: copia inmutable de la fuente publicada, versionada en el repo
+  note: el checksum anterior permite verificar que esta copia no fue alterada; la fuente original se referencia con su URL pública
