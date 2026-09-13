@@ -1,0 +1,56 @@
+{
+  "task": "T-14",
+  "selection_rule": "Métrica primaria: AUC-PR sobre la clase `Yes`; desempate por recall sobre `Yes`. Métricas adecuadas al problema desbalanceado (specs.md §7).",
+  "selected": "logistic-regression",
+  "version": 1,
+  "validation": {
+    "logistic-regression": {
+      "auc_roc": 0.8420680926000661,
+      "auc_pr": 0.66857447884987,
+      "recall_pos": 0.8042704626334519,
+      "precision_pos": 0.5055928411633109,
+      "f1_pos": 0.6208791208791209,
+      "accuracy": 0.738883632923368,
+      "true_positive": 226,
+      "false_positive": 221,
+      "false_negative": 55,
+      "true_negative": 555
+    },
+    "random-forest": {
+      "auc_roc": 0.8414535715595994,
+      "auc_pr": 0.636249094219504,
+      "recall_pos": 0.7686832740213523,
+      "precision_pos": 0.5242718446601942,
+      "f1_pos": 0.6233766233766234,
+      "accuracy": 0.7530747398297067,
+      "true_positive": 216,
+      "false_positive": 196,
+      "false_negative": 65,
+      "true_negative": 580
+    }
+  },
+  "test_file": {
+    "path": "data\\splits\\test.csv",
+    "sha256": "7f1688151384d94b7dba71461511ef3035a78dc2ee0b5d45f6bed63d69a8c241",
+    "size": 1057
+  },
+  "test_metrics": {
+    "auc_roc": 0.8560466078323221,
+    "auc_pr": 0.6698278978158965,
+    "recall_pos": 0.8071428571428572,
+    "precision_pos": 0.5033407572383074,
+    "f1_pos": 0.6200274348422496,
+    "accuracy": 0.7379375591296121,
+    "true_positive": 226,
+    "false_positive": 223,
+    "false_negative": 54,
+    "true_negative": 554
+  },
+  "registry": {
+    "model": "churn-logistic-regression",
+    "alias": "production",
+    "experiment": "churn-detector",
+    "tracking_uri": "sqlite:///C:/Users/Manaus/PROYECTOS/churn_detector/mlflow.db"
+  },
+  "created_at": "2026-09-13T05:05:20+00:00"
+}

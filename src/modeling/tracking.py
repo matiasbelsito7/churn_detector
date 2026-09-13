@@ -58,6 +58,7 @@ MLRUNS_DIR = PROJECT_ROOT / "mlruns"
 TRACKING_URI = f"sqlite:///{MLFLOW_DB.as_posix()}"
 
 EXPERIMENT_NAME = "churn-detector"
+MODEL_PREFIX = "churn-"
 
 METRIC_KEYS = (
     "auc_roc",
@@ -97,7 +98,7 @@ def log_candidate_run(
         mlflow.sklearn.log_model(
             pipeline,
             name="model",
-            registered_model_name=f"churn-{name}",
+            registered_model_name=f"{MODEL_PREFIX}{name}",
             serialization_format="cloudpickle",
         )
 
