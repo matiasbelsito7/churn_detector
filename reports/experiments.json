@@ -1,0 +1,100 @@
+{
+  "task": "T-13",
+  "seed": 42,
+  "test_file": {
+    "path": "data\\splits\\test.csv",
+    "reserved": "Se usa solo en la selección final (T-14)."
+  },
+  "leakage_note": "Preprocessing (T-12) y modelos ajustados únicamente con train; validation solo se evalua; test no participa en T-13.",
+  "experiments": [
+    {
+      "name": "logistic-regression",
+      "model": "LogisticRegression",
+      "params": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 2000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 0.0001,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "metrics": {
+        "auc_roc": 0.8420680926000661,
+        "auc_pr": 0.66857447884987,
+        "recall_pos": 0.8042704626334519,
+        "precision_pos": 0.5055928411633109,
+        "f1_pos": 0.6208791208791209,
+        "accuracy": 0.738883632923368,
+        "true_positive": 226,
+        "false_positive": 221,
+        "false_negative": 55,
+        "true_negative": 555
+      },
+      "train_size": 4929,
+      "validation_size": 1057,
+      "seed": 42,
+      "input_files": {
+        "train": "data\\splits\\train.csv",
+        "train_sha256": "9b7a38ce93a246b260abce0bfa8f0c640f58d1bbb3441964a8f8b8506a5a63b2",
+        "validation": "data\\splits\\validation.csv",
+        "validation_sha256": "5011d2f9916daf6f9a106757b07e7fb71ecc8b4a00b91587d1176079a59466d7"
+      },
+      "created_at": "2026-09-13T04:46:54+00:00"
+    },
+    {
+      "name": "random-forest",
+      "model": "RandomForestClassifier",
+      "params": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": "balanced",
+        "criterion": "gini",
+        "max_depth": null,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": -1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "metrics": {
+        "auc_roc": 0.8414535715595994,
+        "auc_pr": 0.636249094219504,
+        "recall_pos": 0.7686832740213523,
+        "precision_pos": 0.5242718446601942,
+        "f1_pos": 0.6233766233766234,
+        "accuracy": 0.7530747398297067,
+        "true_positive": 216,
+        "false_positive": 196,
+        "false_negative": 65,
+        "true_negative": 580
+      },
+      "train_size": 4929,
+      "validation_size": 1057,
+      "seed": 42,
+      "input_files": {
+        "train": "data\\splits\\train.csv",
+        "train_sha256": "9b7a38ce93a246b260abce0bfa8f0c640f58d1bbb3441964a8f8b8506a5a63b2",
+        "validation": "data\\splits\\validation.csv",
+        "validation_sha256": "5011d2f9916daf6f9a106757b07e7fb71ecc8b4a00b91587d1176079a59466d7"
+      },
+      "created_at": "2026-09-13T04:46:55+00:00"
+    }
+  ]
+}
