@@ -58,6 +58,19 @@ uv sync --extra dev
 Las versiones exactas quedan fijadas en `uv.lock`. Las semillas aleatorias se
 centralizan en `src/seeds.py`.
 
+## Tracking de experimentos
+
+El registro de parámetros, métricas y modelos de cada experimento se integra
+con MLflow (T-17). Para reproducir el tracking y verlo en la interfaz:
+
+```powershell
+uv run python -m src.modeling.tracking
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+```
+
+La base de tracking (`mlflow.db`) y los artefactos (`mlruns/`) no se versionan;
+se regeneran ejecutando el módulo.
+
 ## Estado
 
 En preparación. Las fases y tareas se definen en `docs/tasks.md`.

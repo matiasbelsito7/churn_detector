@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import json
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -93,6 +93,7 @@ def prob_yes(pipeline: Pipeline, X: pd.DataFrame) -> np.ndarray:
 class ExperimentResult:
     name: str
     model: Any
+    pipeline: Any
     params: dict[str, Any]
     metrics: dict[str, object]
     train_size: int
@@ -128,6 +129,7 @@ def train_candidate(
     return ExperimentResult(
         name=name,
         model=model,
+        pipeline=pipeline,
         params=model.get_params(deep=True),
         metrics=metrics,
         train_size=int(len(df_train)),
@@ -140,8 +142,13 @@ def experiment_record(
     result: ExperimentResult, train_sha: str, val_sha: str
 ) -> dict[str, object]:
     return {
-        **asdict(result),
+        "name": result.name,
         "model": type(result.model).__name__,
+        "params": result.params,
+        "metrics": result.metrics,
+        "train_size": result.train_size,
+        "validation_size": result.validation_size,
+        "seed": result.seed,
         "input_files": {
             "train": str(TRAIN_FILE.relative_to(PROJECT_ROOT)),
             "train_sha256": train_sha,
