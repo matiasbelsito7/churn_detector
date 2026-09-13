@@ -1,0 +1,24 @@
+{
+  "task": "T-11",
+  "model": "DummyClassifier",
+  "strategy": "prior",
+  "train_file": "data\\splits\\train.csv",
+  "validation_file": "data\\splits\\validation.csv",
+  "train_size": 4929,
+  "validation_size": 1057,
+  "prevalence_train": 0.26536822884966527,
+  "seed": 42,
+  "metrics": {
+    "auc_roc": 0.5,
+    "auc_pr": 0.26584673604541154,
+    "recall_pos": 0.0,
+    "precision_pos": 0.0,
+    "f1_pos": 0.0,
+    "accuracy": 0.7341532639545885,
+    "true_positive": 0,
+    "false_positive": 0,
+    "false_negative": 281,
+    "true_negative": 776
+  },
+  "created_at": "2026-09-13T00:02:35+00:00"
+}

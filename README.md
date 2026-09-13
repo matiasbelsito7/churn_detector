@@ -35,6 +35,7 @@ data/
   raw/                Datos crudos inmutables y versionados.
   processed/          Artefactos derivados reproducibles (limpieza).
   features/           Datos con feature engineering.
+  splits/             Particiones reproducibles train/validation/test.
 src/
   data/               Capa de datos: ingestion, curation, cleaning, calidad.
   analysis/           Capa de análisis: EDA y feature engineering.

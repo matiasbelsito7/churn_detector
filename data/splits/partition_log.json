@@ -1,0 +1,27 @@
+{
+  "task": "T-11",
+  "input_file": "data\\features\\churn_features.csv",
+  "input_sha256": "ec292187261676b2a9ec3f7398e9b61f7c7f75218798d30ee67c6a336f6bbbfc",
+  "output_files": {
+    "train": "data/splits/train.csv",
+    "validation": "data/splits/validation.csv",
+    "test": "data/splits/test.csv"
+  },
+  "output_sha256": {
+    "train": "9b7a38ce93a246b260abce0bfa8f0c640f58d1bbb3441964a8f8b8506a5a63b2",
+    "validation": "5011d2f9916daf6f9a106757b07e7fb71ecc8b4a00b91587d1176079a59466d7",
+    "test": "7f1688151384d94b7dba71461511ef3035a78dc2ee0b5d45f6bed63d69a8c241"
+  },
+  "rows": {
+    "train": 4929,
+    "validation": 1057,
+    "test": 1057
+  },
+  "fractions": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "seed": 42,
+  "created_at": "2026-09-13T00:02:31+00:00"
+}
