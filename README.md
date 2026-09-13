@@ -71,6 +71,27 @@ mlflow ui --backend-store-uri sqlite:///mlflow.db
 La base de tracking (`mlflow.db`) y los artefactos (`mlruns/`) no se versionan;
 se regeneran ejecutando el módulo.
 
+## Pipeline reproducible
+
+El pipeline completo `datos → features → modelo → predicción` se orquesta desde
+un único comando (T-15):
+
+```powershell
+uv run python -m src.serving.pipeline
+```
+
+También permite ejecutar etapas sueltas, por ejemplo:
+
+```powershell
+uv run python -m src.serving.pipeline features prediccion
+```
+
+La ejecución regenera desde el raw versionado todos los artefactos (procesado,
+features, particiones, experimentos, tracking y modelos, selección y
+predicciones). Con los mismos datos y configuración los resultados son
+idénticos (semillas fijas); los artefactos de predicción se versionan en
+`data/predictions/`.
+
 ## Estado
 
 En preparación. Las fases y tareas se definen en `docs/tasks.md`.

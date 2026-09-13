@@ -1,0 +1,17 @@
+{
+  "task": "T-15",
+  "model": "churn-logistic-regression@production",
+  "threshold": 0.5,
+  "input_features": {
+    "path": "data\\features\\churn_features.csv",
+    "sha256": "ec292187261676b2a9ec3f7398e9b61f7c7f75218798d30ee67c6a336f6bbbfc",
+    "rows": 7043
+  },
+  "output": {
+    "path": "data\\predictions\\predictions.csv",
+    "rows": 7043,
+    "sha256": "d10be60bb80bc57ef9e393fa4f5ecb7fbb4abc6c69511f53283e59700e497bec"
+  },
+  "churn_rate_pred": 0.4127502484736618,
+  "created_at": "2026-09-13T05:14:05+00:00"
+}
