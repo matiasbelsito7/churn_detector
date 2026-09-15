@@ -1,0 +1,248 @@
+{
+  "task": "T-22",
+  "status": "ok",
+  "checks": {
+    "features": [
+      {
+        "name": "tenure",
+        "metric": "psi",
+        "value": 0.0006230309906330091,
+        "status": "ok"
+      },
+      {
+        "name": "MonthlyCharges",
+        "metric": "psi",
+        "value": 0.0013034060535605616,
+        "status": "ok"
+      },
+      {
+        "name": "TotalCharges",
+        "metric": "psi",
+        "value": 0.0004458034187854495,
+        "status": "ok"
+      },
+      {
+        "name": "addon_missing_count",
+        "metric": "psi",
+        "value": 0.00011915046753770475,
+        "status": "ok"
+      },
+      {
+        "name": "avg_monthly_charge_hist",
+        "metric": "psi",
+        "value": 0.0008179987394326045,
+        "status": "ok"
+      },
+      {
+        "name": "gender",
+        "metric": "categorical_max_shift",
+        "value": 0.0016342528191098937,
+        "status": "ok"
+      },
+      {
+        "name": "SeniorCitizen",
+        "metric": "categorical_max_shift",
+        "value": 0.0015780810496413,
+        "status": "ok"
+      },
+      {
+        "name": "Partner",
+        "metric": "categorical_max_shift",
+        "value": 0.0006352883096725215,
+        "status": "ok"
+      },
+      {
+        "name": "Dependents",
+        "metric": "categorical_max_shift",
+        "value": 0.005410925731789251,
+        "status": "ok"
+      },
+      {
+        "name": "PhoneService",
+        "metric": "categorical_max_shift",
+        "value": 0.004809599738118578,
+        "status": "ok"
+      },
+      {
+        "name": "MultipleLines",
+        "metric": "categorical_max_shift",
+        "value": 0.007602056831600534,
+        "status": "ok"
+      },
+      {
+        "name": "InternetService",
+        "metric": "categorical_max_shift",
+        "value": 0.00481161616061232,
+        "status": "ok"
+      },
+      {
+        "name": "OnlineSecurity",
+        "metric": "categorical_max_shift",
+        "value": 0.0034598641328762447,
+        "status": "ok"
+      },
+      {
+        "name": "OnlineBackup",
+        "metric": "categorical_max_shift",
+        "value": 0.004081498381662496,
+        "status": "ok"
+      },
+      {
+        "name": "DeviceProtection",
+        "metric": "categorical_max_shift",
+        "value": 0.0012206557596069478,
+        "status": "ok"
+      },
+      {
+        "name": "TechSupport",
+        "metric": "categorical_max_shift",
+        "value": 0.003764977662215674,
+        "status": "ok"
+      },
+      {
+        "name": "StreamingTV",
+        "metric": "categorical_max_shift",
+        "value": 0.004374340539825661,
+        "status": "ok"
+      },
+      {
+        "name": "StreamingMovies",
+        "metric": "categorical_max_shift",
+        "value": 0.004882334978071556,
+        "status": "ok"
+      },
+      {
+        "name": "Contract",
+        "metric": "categorical_max_shift",
+        "value": 0.0038070056681924203,
+        "status": "ok"
+      },
+      {
+        "name": "PaperlessBilling",
+        "metric": "categorical_max_shift",
+        "value": 0.003439123787226328,
+        "status": "ok"
+      },
+      {
+        "name": "PaymentMethod",
+        "metric": "categorical_max_shift",
+        "value": 0.005304977132760708,
+        "status": "ok"
+      },
+      {
+        "name": "tenure_bin",
+        "metric": "categorical_max_shift",
+        "value": 0.0032995585446234377,
+        "status": "ok"
+      },
+      {
+        "name": "is_new_client",
+        "metric": "categorical_max_shift",
+        "value": 0.0016705484239973867,
+        "status": "ok"
+      },
+      {
+        "name": "is_month_to_month",
+        "metric": "categorical_max_shift",
+        "value": 0.0007901783632278114,
+        "status": "ok"
+      },
+      {
+        "name": "is_electronic_check",
+        "metric": "categorical_max_shift",
+        "value": 0.000987902991757439,
+        "status": "ok"
+      },
+      {
+        "name": "is_fiber_optic",
+        "metric": "categorical_max_shift",
+        "value": 0.00481161616061232,
+        "status": "ok"
+      }
+    ],
+    "predictions": [
+      {
+        "name": "churn_rate",
+        "metric": "abs_delta",
+        "value": 0.0,
+        "reference": 0.4127502484736618,
+        "current": 0.4127502484736618,
+        "status": "ok"
+      },
+      {
+        "name": "churn_prob",
+        "metric": "psi",
+        "value": 0.0,
+        "status": "ok"
+      }
+    ],
+    "target": [
+      {
+        "name": "target_prevalence",
+        "metric": "abs_delta",
+        "value": 1.6419440306281174e-06,
+        "reference": 0.26536822884966527,
+        "current": 0.2653698707936959,
+        "status": "ok"
+      }
+    ],
+    "performance": [
+      {
+        "name": "recall_pos",
+        "metric": "drop_vs_reference",
+        "value": -0.0018459069020866359,
+        "reference": 0.8071428571428572,
+        "current": 0.8089887640449438,
+        "status": "ok"
+      },
+      {
+        "name": "auc_pr",
+        "metric": "drop_vs_reference",
+        "value": 0.001468667016907177,
+        "reference": 0.6698278978158965,
+        "current": 0.6683592307989893,
+        "status": "ok"
+      }
+    ]
+  },
+  "checks_count": {
+    "ok": 31,
+    "warn": 0,
+    "alert": 0
+  },
+  "reference_metrics": {
+    "auc_roc": 0.8560466078323221,
+    "auc_pr": 0.6698278978158965,
+    "recall_pos": 0.8071428571428572,
+    "precision_pos": 0.5033407572383074,
+    "f1_pos": 0.6200274348422496,
+    "accuracy": 0.7379375591296121,
+    "true_positive": 226,
+    "false_positive": 223,
+    "false_negative": 54,
+    "true_negative": 554
+  },
+  "provenance": {
+    "features_referencia": {
+      "path": "data\\features\\churn_features.csv",
+      "sha256": "ec292187261676b2a9ec3f7398e9b61f7c7f75218798d30ee67c6a336f6bbbfc",
+      "rows": 4929
+    },
+    "features_corriente": {
+      "path": "data\\features\\churn_features.csv",
+      "sha256": "ec292187261676b2a9ec3f7398e9b61f7c7f75218798d30ee67c6a336f6bbbfc",
+      "rows": 7043
+    },
+    "predicciones_referencia": {
+      "path": "data\\predictions\\predictions.csv",
+      "sha256": "d10be60bb80bc57ef9e393fa4f5ecb7fbb4abc6c69511f53283e59700e497bec",
+      "rows": 7043
+    },
+    "predicciones_corriente": {
+      "path": "data\\predictions\\predictions.csv",
+      "sha256": "d10be60bb80bc57ef9e393fa4f5ecb7fbb4abc6c69511f53283e59700e497bec",
+      "rows": 7043
+    }
+  },
+  "created_at": "2026-09-15T19:39:22+00:00"
+}
