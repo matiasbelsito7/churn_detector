@@ -26,6 +26,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import joblib
 import mlflow
 import mlflow.sklearn
 import pandas as pd
@@ -49,6 +50,7 @@ TEST_FILE = PROJECT_ROOT / "data" / "splits" / "test.csv"
 EXPERIMENTS_FILE = PROJECT_ROOT / "reports" / "experiments.json"
 SELECTION_JSON = PROJECT_ROOT / "reports" / "selection.json"
 SELECTION_MD = PROJECT_ROOT / "reports" / "selection.md"
+MODELS_DIR = PROJECT_ROOT / "data" / "models"
 
 PRIMARY_METRIC = "auc_pr"
 TIEBREAK_METRIC = "recall_pos"
@@ -179,6 +181,14 @@ def build_selection_report(
     return "\n".join(lines)
 
 
+def export_model(pipeline: Pipeline, name: str) -> Path:
+    """Exporta el pipeline a un archivo joblib standalone para despliegue."""
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    path = MODELS_DIR / f"{MODEL_PREFIX}{name}.joblib"
+    joblib.dump(pipeline, path)
+    return path
+
+
 def main() -> int:
     payload = json.loads(EXPERIMENTS_FILE.read_text(encoding="utf-8"))
     records = payload["experiments"]
@@ -187,6 +197,7 @@ def main() -> int:
     df_test = pd.read_csv(TEST_FILE)
     version = promote_model(selected)
     pipeline = load_selected_model(selected)
+    model_file = export_model(pipeline, selected)
     prob = prob_yes(pipeline, df_test[list(FEATURE_NAMES)])
     test_metrics = evaluate_metrics(df_test[TARGET], prob)
 
@@ -212,6 +223,10 @@ def main() -> int:
                     "alias": "production",
                     "experiment": EXPERIMENT_NAME,
                     "tracking_uri": TRACKING_URI,
+                },
+                "artifact": {
+                    "path": str(model_file.relative_to(PROJECT_ROOT)),
+                    "standalone": True,
                 },
                 "created_at": datetime.now(UTC).isoformat(timespec="seconds"),
             },

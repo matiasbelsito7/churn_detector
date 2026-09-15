@@ -10,6 +10,7 @@ from sklearn.pipeline import Pipeline
 from src.modeling.select import (
     SELECTION_RULE,
     build_selection_report,
+    export_model,
     load_selected_model,
     log_selection_run,
     promote_model,
@@ -195,3 +196,17 @@ def test_as_float_handles_scalar_and_array():
     assert _as_float(0.5) == 0.5
     assert _as_float(np.float32(0.25)) == 0.25
     assert _as_float(np.array([0.1, 0.2])[0]) == 0.1
+
+
+def test_export_model_writes_joblib(tmp_path, monkeypatch):
+    import src.modeling.select as select_mod
+    from joblib import load as joblib_load
+
+    monkeypatch.setattr(select_mod, "MODELS_DIR", tmp_path)
+    pipeline = small_pipeline()
+    path = export_model(pipeline, "test-model")
+
+    assert path.name == "churn-test-model.joblib"
+    assert path.is_file()
+    loaded = joblib_load(path)
+    assert isinstance(loaded, Pipeline)

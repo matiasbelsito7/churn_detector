@@ -16,5 +16,18 @@ services:
       timeout: 3s
       retries: 12
 
+  api:
+    build: .
+    container_name: churn_api
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_FILE: /app/data/models/churn-logistic-regression.joblib
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
 volumes:
   churn_pgdata:

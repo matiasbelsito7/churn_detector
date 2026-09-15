@@ -2,7 +2,7 @@
   "task": "T-14",
   "selection_rule": "Métrica primaria: AUC-PR sobre la clase `Yes`; desempate por recall sobre `Yes`. Métricas adecuadas al problema desbalanceado (specs.md §7).",
   "selected": "logistic-regression",
-  "version": 1,
+  "version": 3,
   "validation": {
     "logistic-regression": {
       "auc_roc": 0.8420680926000661,
@@ -52,5 +52,9 @@
     "experiment": "churn-detector",
     "tracking_uri": "sqlite:///C:/Users/Manaus/PROYECTOS/churn_detector/mlflow.db"
   },
-  "created_at": "2026-09-13T05:05:20+00:00"
+  "artifact": {
+    "path": "data\\models\\churn-logistic-regression.joblib",
+    "standalone": true
+  },
+  "created_at": "2026-09-15T16:47:20+00:00"
 }

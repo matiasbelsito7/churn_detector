@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from joblib import dump
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from src.modeling.preprocessing import (
@@ -156,3 +157,37 @@ def test_predict_internal_error_hides_details(client: TestClient, monkeypatch) -
     body = resp.json()
     assert body["code"] == "internal_error"
     assert "no se debe exponer" not in body["message"]
+
+
+def test_default_load_pipeline_reads_model_file(monkeypatch, tmp_path) -> None:
+    import src.serving.api as api_module
+
+    model_file = tmp_path / "model.joblib"
+    dump(fake_model(), model_file)
+    monkeypatch.setenv("MODEL_FILE", str(model_file))
+    monkeypatch.setattr(api_module, "MODEL_FILE", str(model_file))
+
+    model = api_module._default_load_pipeline()
+    assert isinstance(model, Pipeline)
+
+
+def test_default_load_pipeline_falls_back_to_registry(monkeypatch) -> None:
+    import src.serving.api as api_module
+
+    monkeypatch.delenv("MODEL_FILE", raising=False)
+    monkeypatch.setattr(api_module, "MODEL_FILE", None)
+    fake = object()
+    monkeypatch.setattr(api_module, "load_selected_model", lambda *a, **kw: fake)
+
+    assert api_module._default_load_pipeline() is fake
+
+
+def test_default_load_pipeline_missing_file_raises(monkeypatch, tmp_path) -> None:
+    import src.serving.api as api_module
+
+    missing = tmp_path / "no-existe.joblib"
+    monkeypatch.setenv("MODEL_FILE", str(missing))
+    monkeypatch.setattr(api_module, "MODEL_FILE", str(missing))
+
+    with pytest.raises(FileNotFoundError):
+        api_module._default_load_pipeline()

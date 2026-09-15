@@ -20,9 +20,12 @@ Ejecución:
 from __future__ import annotations
 
 import logging
+import os
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, Literal, cast
 
+import joblib
 import pandas as pd
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -39,6 +42,18 @@ logger = logging.getLogger(__name__)
 SELECTED_MODEL_NAME = "logistic-regression"
 HEALTH_ENDPOINT = "/health"
 PREDICT_ENDPOINT = "/predict"
+
+MODEL_FILE = os.environ.get("MODEL_FILE")
+
+
+def _default_load_pipeline() -> Pipeline:
+    """Carga el modelo desde `MODEL_FILE` (contenedor) o del Model Registry."""
+    if MODEL_FILE:
+        model_path = Path(MODEL_FILE)
+        if not model_path.is_file():
+            raise FileNotFoundError(f"No existe el modelo en {MODEL_FILE}")
+        return joblib.load(model_path)
+    return load_selected_model(SELECTED_MODEL_NAME)
 
 
 class ApiError(Exception):
@@ -154,9 +169,7 @@ def create_app(
         ),
         version="0.1.0",
     )
-    app.state.load_pipeline = load_pipeline or (
-        lambda: load_selected_model(SELECTED_MODEL_NAME)
-    )
+    app.state.load_pipeline = load_pipeline or _default_load_pipeline
     app.state.model = None
     app.state.threshold = threshold
 
