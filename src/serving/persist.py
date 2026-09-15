@@ -117,6 +117,7 @@ def load_predictions(conn: psycopg.Connection) -> tuple[int, int]:
             source_sha256, threshold
         )
         VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (customer_id) DO NOTHING
         """,
         rows,
     )
@@ -145,7 +146,10 @@ def verification_queries(conn: psycopg.Connection) -> dict[str, object]:
     invalid_row = cur.fetchone()
     assert invalid_row is not None
     invalid_class = int(invalid_row[0])
-    cur.execute("SELECT count(*) FROM predictions p JOIN source_files s USING (sha256)")
+    cur.execute(
+        "SELECT count(*) FROM predictions p JOIN source_files s "
+        "ON p.source_sha256 = s.sha256"
+    )
     joined_row = cur.fetchone()
     assert joined_row is not None
     joined = int(joined_row[0])

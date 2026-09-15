@@ -1,0 +1,28 @@
+{
+  "task": "T-16",
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "churn",
+    "user": "churn"
+  },
+  "loaded": {
+    "predictions": 7043,
+    "sources": 1
+  },
+  "checks": {
+    "predicciones": 7043,
+    "clientes_distintos": 7043,
+    "clases_invalidas": 0,
+    "predicciones_con_origen": 7043,
+    "distribucion_por_clase": {
+      "No": 4136,
+      "Yes": 2907
+    },
+    "rango_probabilidad": [
+      0.013102,
+      0.970527
+    ]
+  },
+  "created_at": "2026-09-15T18:27:08+00:00"
+}
