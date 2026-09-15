@@ -2,7 +2,7 @@
 
 import pandas as pd
 from src.data.contract import COLUMNS
-from src.data.quality_checks import run_all
+from src.data.quality_checks import build_report, run_all
 
 
 def valid_df() -> pd.DataFrame:
@@ -109,3 +109,49 @@ def test_missing_totalcharges_fails_with_tenure_gt_zero():
 
 def test_missing_totalcharges_passes_with_tenure_zero():
     assert by_rule(valid_df())["R7"]
+
+
+def test_build_report_approved():
+    results = run_all(valid_df())
+    report = build_report(results, "data/raw/test.csv")
+    assert "APROBADO" in report
+    assert "Pasa" in report
+    assert "Falla" not in report
+
+
+def test_build_report_rejected():
+    df = valid_df()
+    df.loc[0, "gender"] = "Other"
+    results = run_all(df)
+    report = build_report(results, "data/raw/test.csv")
+    assert "RECHAZADO" in report
+    assert "Falla" in report
+
+
+def test_main_writes_report_and_exit_code(tmp_path, monkeypatch, capsys):
+    from src.data import quality_checks
+
+    raw = tmp_path / "raw.csv"
+    valid_df().to_csv(raw, index=False)
+    report = tmp_path / "quality_report.md"
+    monkeypatch.setattr(quality_checks, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(quality_checks, "RAW_FILE", raw)
+    monkeypatch.setattr(quality_checks, "REPORT_FILE", report)
+    assert quality_checks.main() == 0
+    assert "APROBADO" in report.read_text(encoding="utf-8")
+    assert "APROBADO" in capsys.readouterr().out
+
+
+def test_main_rejected_when_quality_fails(tmp_path, monkeypatch):
+    from src.data import quality_checks
+
+    raw = tmp_path / "raw_bad.csv"
+    df = valid_df()
+    df.loc[0, "gender"] = "Other"
+    df.to_csv(raw, index=False)
+    report = tmp_path / "quality_report.md"
+    monkeypatch.setattr(quality_checks, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(quality_checks, "RAW_FILE", raw)
+    monkeypatch.setattr(quality_checks, "REPORT_FILE", report)
+    assert quality_checks.main() == 1
+    assert "RECHAZADO" in report.read_text(encoding="utf-8")

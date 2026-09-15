@@ -1,12 +1,17 @@
 """Pruebas del feature engineering derivado del EDA (T-10)."""
 
+import json
+
 import pandas as pd
 import pytest
+from src.analysis import features
 from src.analysis.features import (
     FEATURE_COLUMNS,
+    build_log,
     engineer_features,
 )
 from src.data.contract import COLUMNS
+from src.seeds import RANDOM_SEED
 
 
 def make_df() -> pd.DataFrame:
@@ -138,3 +143,37 @@ def test_avg_monthly_charge_hist_non_negative():
 def test_output_bool_free_columns():
     out = engineer_features(make_df())
     assert not out.apply(lambda s: pd.api.types.is_bool_dtype(s)).any()
+
+
+def test_build_log_schema():
+    log = build_log("aaa", "bbb", engineer_features(make_df()))
+    assert log["task"] == "T-10"
+    assert log["input_sha256"] == "aaa"
+    assert log["output_sha256"] == "bbb"
+    assert log["rows"] == 4
+    assert log["features"] == list(FEATURE_COLUMNS)
+    assert log["seed"] == RANDOM_SEED
+
+
+def test_main_writes_features(tmp_path, monkeypatch):
+    input_file = tmp_path / "churn_cleaned.csv"
+    out_file = tmp_path / "churn_features.csv"
+    log_file = tmp_path / "feature_log.json"
+    make_df().to_csv(input_file, index=False)
+    monkeypatch.setattr(features, "INPUT_FILE", input_file)
+    monkeypatch.setattr(features, "OUTPUT_FILE", out_file)
+    monkeypatch.setattr(features, "LOG_FILE", log_file)
+    monkeypatch.setattr(features, "PROJECT_ROOT", tmp_path)
+    assert features.main() == 0
+    out = pd.read_csv(out_file)
+    assert "tenure_bin" in out.columns
+    assert "addon_missing_count" in out.columns
+    log = json.loads(log_file.read_text(encoding="utf-8"))
+    assert log["task"] == "T-10"
+
+
+def test_main_rejects_bad_schema(tmp_path, monkeypatch):
+    input_file = tmp_path / "bad.csv"
+    pd.DataFrame({"wrong": [1]}).to_csv(input_file, index=False)
+    monkeypatch.setattr(features, "INPUT_FILE", input_file)
+    assert features.main() == 1

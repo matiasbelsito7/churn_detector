@@ -1,10 +1,13 @@
 """Pruebas de las particiones reproducibles (T-11)."""
 
+import json
+
 import numpy as np
 import pandas as pd
 from src.analysis.features import FEATURE_COLUMNS
 from src.data.contract import COLUMNS
-from src.modeling.split import create_partitions
+from src.modeling import split
+from src.modeling.split import build_log, create_partitions
 
 
 def sample_df(n: int = 60, seed: int = 7) -> pd.DataFrame:
@@ -107,3 +110,49 @@ def test_split_with_different_seed_differs():
     first = create_partitions(df, seed=1)
     second = create_partitions(df, seed=2)
     assert ids(first.test) != ids(second.test)
+
+
+def test_build_log_traces_partitions():
+    parts = create_partitions(sample_df(n=100))
+    log = build_log(
+        "sha-in", {"train": "sha-tr", "validation": "sha-va", "test": "sha-te"}, parts
+    )
+    assert log["task"] == "T-11"
+    assert log["input_sha256"] == "sha-in"
+    assert log["rows"]["train"] == len(parts.train)
+    assert log["rows"]["validation"] == len(parts.validation)
+    assert log["rows"]["test"] == len(parts.test)
+    assert log["output_sha256"]["train"] == "sha-tr"
+    assert log["fractions"] == {
+        "train": split.TRAIN_FRAC,
+        "validation": split.VAL_FRAC,
+        "test": split.TEST_FRAC,
+    }
+
+
+def test_main_writes_partitions_and_log(tmp_path, monkeypatch):
+    df = sample_df(n=100)
+    in_file = tmp_path / "churn_features.csv"
+    df.to_csv(in_file, index=False)
+    splits_dir = tmp_path / "splits"
+    monkeypatch.setattr(split, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(split, "INPUT_FILE", in_file)
+    monkeypatch.setattr(split, "SPLITS_DIR", splits_dir)
+    monkeypatch.setattr(split, "LOG_FILE", splits_dir / "partition_log.json")
+    monkeypatch.setattr(split, "TRAIN_FRAC", 0.70)
+    monkeypatch.setattr(split, "VAL_FRAC", 0.15)
+    monkeypatch.setattr(split, "TEST_FRAC", 0.15)
+    assert split.main() == 0
+    for name in ("train", "validation", "test"):
+        part = pd.read_csv(splits_dir / f"{name}.csv")
+        assert list(part.columns) == list(COLUMNS) + list(FEATURE_COLUMNS)
+    log = json.loads((splits_dir / "partition_log.json").read_text(encoding="utf-8"))
+    assert log["task"] == "T-11"
+    assert log["rows"]["train"] + log["rows"]["validation"] + log["rows"]["test"] == 100
+
+
+def test_main_rejects_bad_schema(tmp_path, monkeypatch):
+    in_file = tmp_path / "bad.csv"
+    pd.DataFrame({"wrong": [1]}).to_csv(in_file, index=False)
+    monkeypatch.setattr(split, "INPUT_FILE", in_file)
+    assert split.main() == 1

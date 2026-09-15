@@ -1,7 +1,10 @@
 """Pruebas de evaluación y selección del modelo (T-14)."""
 
+from unittest import mock
+
 import mlflow
 import numpy as np
+import pytest
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from src.modeling.select import (
@@ -15,6 +18,7 @@ from src.modeling.select import (
 from src.modeling.tracking import (
     EXPERIMENT_NAME,
     METRIC_KEYS,
+    _as_float,
     log_candidate_run,
 )
 
@@ -152,3 +156,42 @@ def test_build_selection_report_is_complete():
     assert "0.6686" in report
     assert SELECTION_RULE in report
     assert "TP=10" in report
+
+
+def test_promote_model_raises_when_no_versions():
+    client = mock.Mock()
+    client.search_model_versions.return_value = []
+    with (
+        mock.patch("mlflow.tracking.MlflowClient", return_value=client),
+        mock.patch("mlflow.set_tracking_uri"),
+    ):
+        with pytest.raises(ValueError, match="No hay versiones registradas"):
+            promote_model("no-existe")
+
+
+def test_promote_model_sets_alias_on_latest_version():
+    class FakeVersion:
+        def __init__(self, version):
+            self.version = str(version)
+
+    client = mock.Mock()
+    client.search_model_versions.return_value = [
+        FakeVersion(1),
+        FakeVersion(3),
+        FakeVersion(2),
+    ]
+    with (
+        mock.patch("mlflow.tracking.MlflowClient", return_value=client),
+        mock.patch("mlflow.set_tracking_uri"),
+    ):
+        version = promote_model("prueba")
+    assert version == 3
+    client.set_registered_model_alias.assert_called_once_with(
+        "churn-prueba", "production", "3"
+    )
+
+
+def test_as_float_handles_scalar_and_array():
+    assert _as_float(0.5) == 0.5
+    assert _as_float(np.float32(0.25)) == 0.25
+    assert _as_float(np.array([0.1, 0.2])[0]) == 0.1

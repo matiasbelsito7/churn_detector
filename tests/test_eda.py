@@ -132,3 +132,29 @@ def test_md_table_builds_markdown():
     table = eda.md_table(("a", "b"), [(1, "x"), (2, "y")])
     assert table.startswith("| a | b |")
     assert "| 1 | x |" in table
+
+
+def test_build_report_contains_all_sections():
+    report = eda.build_report(sample_df())
+    assert "# EDA del dataset procesado (T-09)" in report
+    assert "## 1. Desbalanceo del target" in report
+    assert "## 2. Valores faltantes" in report
+    assert "## 3. Perfil univariado" in report
+    assert "## 4. Perfil bivariado" in report
+    assert "## 5. Hallazgos y decisiones" in report
+
+
+def test_main_writes_report_and_figures(tmp_path, monkeypatch):
+    cleaned = tmp_path / "churn_cleaned.csv"
+    sample_df().to_csv(cleaned, index=False)
+    figures_dir = tmp_path / "figures"
+    report_file = tmp_path / "eda.md"
+    monkeypatch.setattr(eda, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(eda, "CLEANED_FILE", cleaned)
+    monkeypatch.setattr(eda, "FIGURES_DIR", figures_dir)
+    monkeypatch.setattr(eda, "REPORT_FILE", report_file)
+    assert eda.main() == 0
+    assert "# EDA del dataset procesado (T-09)" in report_file.read_text(
+        encoding="utf-8"
+    )
+    assert any(figures_dir.iterdir())
