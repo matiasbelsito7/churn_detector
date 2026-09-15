@@ -42,6 +42,8 @@ mlruns/
 *.parquet.bak
 *.pkl
 *.joblib
+# El modelo seleccionado (T-14) se exporta versionable para el despliegue (T-19)
+!data/models/*.joblib
 
 # Datos derivados tratados como residuales en locales de trabajo
 # (la política de versionado se define en docs/tasks.md, tarea T-03)

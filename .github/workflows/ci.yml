@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    name: Lint, typecheck y tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias (lockfile congelado)
+        run: uv sync --frozen --extra dev
+
+      - name: Formato (black)
+        run: uv run black --check src tests
+
+      - name: Lint (ruff)
+        run: uv run ruff check src tests
+
+      - name: Typecheck (mypy)
+        run: uv run mypy src
+
+      - name: Tests (pytest)
+        run: uv run pytest
