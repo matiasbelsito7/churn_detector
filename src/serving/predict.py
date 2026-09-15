@@ -81,6 +81,7 @@ def main() -> int:
             {
                 "task": "T-15",
                 "model": "churn-logistic-regression@production",
+                "model_version": "production",
                 "threshold": PREDICTION_THRESHOLD,
                 "input_features": {
                     "path": str(FEATURES_FILE.relative_to(PROJECT_ROOT)),
