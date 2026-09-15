@@ -92,6 +92,31 @@ predicciones). Con los mismos datos y configuración los resultados son
 idénticos (semillas fijas); los artefactos de predicción se versionan en
 `data/predictions/`.
 
+## API de predicción
+
+La API FastAPI (T-18) expone dos endpoints conforme a `docs/specs.md` §8.2:
+
+```powershell
+uv run python -m src.serving.api
+```
+
+- `GET /health` — disponibilidad del servicio.
+- `POST /predict` — predicción por cliente. Recibe el esquema procesado del
+  cliente (sin target) y devuelve `customerID`, `churn_prob` y `churn_class`.
+  Aplica el mismo feature engineering que en entrenamiento y el modelo
+  seleccionado con su pipeline, cargados desde MLflow.
+- Errores: entrada inválida devuelve `422` con código `invalid_request` y
+  detalle de campos; modelo no disponible devuelve `503` con `model_unavailable`;
+  errores internos devuelven `500` sin exponer detalles.
+
+Documentación interactiva (OpenAPI) en `http://127.0.0.1:8000/docs`.
+
+Ejemplo:
+
+```powershell
+Invoke-RestMethod -Uri http://127.0.0.1:8000/predict -Method Post -ContentType "application/json" -Body '{"customerID":"0001-ABCD","gender":"Male","SeniorCitizen":0,"Partner":"No","Dependents":"No","tenure":24,"PhoneService":"Yes","MultipleLines":"No","InternetService":"Fiber optic","OnlineSecurity":"No","OnlineBackup":"Yes","DeviceProtection":"No","TechSupport":"No","StreamingTV":"No","StreamingMovies":"Yes","Contract":"Month-to-month","PaperlessBilling":"Yes","PaymentMethod":"Electronic check","MonthlyCharges":74.5,"TotalCharges":1788.0}'
+```
+
 ## Estado
 
 En preparación. Las fases y tareas se definen en `docs/tasks.md`.
