@@ -1,0 +1,179 @@
+{
+  "task": "T-28",
+  "model": "churn-logistic-regression",
+  "alias": "production",
+  "method": "shap.LinearExplainer sobre features preprocesadas",
+  "partition": {
+    "path": "data\\splits\\validation.csv",
+    "sha256": "5011d2f9916daf6f9a106757b07e7fb71ecc8b4a00b91587d1176079a59466d7",
+    "rows": 1057
+  },
+  "background_size": 500,
+  "base_value": -0.7951058213540576,
+  "feature_importance": [
+    {
+      "feature": "MonthlyCharges",
+      "mean_abs_shap": 0.6933912207975328,
+      "share_pct": 13.90637788081143,
+      "mean_shap": -0.030788709529264036
+    },
+    {
+      "feature": "tenure",
+      "mean_abs_shap": 0.4903647633874091,
+      "share_pct": 9.834560194253125,
+      "mean_shap": 0.010295035572472818
+    },
+    {
+      "feature": "is_fiber_optic",
+      "mean_abs_shap": 0.43757465106946114,
+      "share_pct": 8.775822748140836,
+      "mean_shap": 0.033444067466167945
+    },
+    {
+      "feature": "Contract",
+      "mean_abs_shap": 0.38095549142842267,
+      "share_pct": 7.640291455493886,
+      "mean_shap": 0.07937557859273488
+    },
+    {
+      "feature": "is_month_to_month",
+      "mean_abs_shap": 0.3582586272492034,
+      "share_pct": 7.1850921963763,
+      "mean_shap": 0.03762223994764577
+    },
+    {
+      "feature": "InternetService",
+      "mean_abs_shap": 0.32248452240031134,
+      "share_pct": 6.467621012065291,
+      "mean_shap": 0.02098336331685279
+    },
+    {
+      "feature": "StreamingMovies",
+      "mean_abs_shap": 0.29314113663259483,
+      "share_pct": 5.879121765826001,
+      "mean_shap": -0.03029661270377366
+    },
+    {
+      "feature": "StreamingTV",
+      "mean_abs_shap": 0.2368007431536249,
+      "share_pct": 4.749181296186084,
+      "mean_shap": -0.02487527955755479
+    },
+    {
+      "feature": "MultipleLines",
+      "mean_abs_shap": 0.2212328241829865,
+      "share_pct": 4.436957319980355,
+      "mean_shap": -0.023375730631848616
+    },
+    {
+      "feature": "is_new_client",
+      "mean_abs_shap": 0.16261958318666866,
+      "share_pct": 3.2614335266788683,
+      "mean_shap": 0.009205344612435969
+    },
+    {
+      "feature": "tenure_bin",
+      "mean_abs_shap": 0.1623238195441313,
+      "share_pct": 3.2555018089801657,
+      "mean_shap": -0.006179314789917604
+    },
+    {
+      "feature": "addon_missing_count",
+      "mean_abs_shap": 0.1535374432358686,
+      "share_pct": 3.0792857487231986,
+      "mean_shap": 0.042207934940941015
+    },
+    {
+      "feature": "DeviceProtection",
+      "mean_abs_shap": 0.14799365669220677,
+      "share_pct": 2.9681017760186608,
+      "mean_shap": 0.004369542798253842
+    },
+    {
+      "feature": "PaperlessBilling",
+      "mean_abs_shap": 0.13752635272034378,
+      "share_pct": 2.7581737006983236,
+      "mean_shap": -0.005508102771594667
+    },
+    {
+      "feature": "TechSupport",
+      "mean_abs_shap": 0.11591163014042873,
+      "share_pct": 2.3246774420645924,
+      "mean_shap": 0.02609589901332415
+    },
+    {
+      "feature": "OnlineSecurity",
+      "mean_abs_shap": 0.10963522065447899,
+      "share_pct": 2.1988002757140643,
+      "mean_shap": 0.021698201976357714
+    },
+    {
+      "feature": "OnlineBackup",
+      "mean_abs_shap": 0.1041900091651049,
+      "share_pct": 2.0895932849980934,
+      "mean_shap": 0.017484643351089617
+    },
+    {
+      "feature": "is_electronic_check",
+      "mean_abs_shap": 0.10404982233839075,
+      "share_pct": 2.0867817538916618,
+      "mean_shap": -0.0015235315533003052
+    },
+    {
+      "feature": "TotalCharges",
+      "mean_abs_shap": 0.07308773216273913,
+      "share_pct": 1.4658184173972484,
+      "mean_shap": 0.0006638135142692224
+    },
+    {
+      "feature": "Dependents",
+      "mean_abs_shap": 0.07020889758161591,
+      "share_pct": 1.408081658781528,
+      "mean_shap": 0.010917224754120559
+    },
+    {
+      "feature": "PaymentMethod",
+      "mean_abs_shap": 0.06901264543867064,
+      "share_pct": 1.3840901027283758,
+      "mean_shap": 0.00035891331392974655
+    },
+    {
+      "feature": "SeniorCitizen",
+      "mean_abs_shap": 0.05293422950087491,
+      "share_pct": 1.0616278028759574,
+      "mean_shap": 0.010711777143757924
+    },
+    {
+      "feature": "avg_monthly_charge_hist",
+      "mean_abs_shap": 0.052906782620366084,
+      "share_pct": 1.0610773391830854,
+      "mean_shap": 0.000792338129227132
+    },
+    {
+      "feature": "PhoneService",
+      "mean_abs_shap": 0.014979163012118317,
+      "share_pct": 0.3004161214288222,
+      "mean_shap": 0.00027487119791246993
+    },
+    {
+      "feature": "Partner",
+      "mean_abs_shap": 0.01444212573421016,
+      "share_pct": 0.28964551589089327,
+      "mean_shap": -0.0014670724981788036
+    },
+    {
+      "feature": "gender",
+      "mean_abs_shap": 0.006575113492278066,
+      "share_pct": 0.13186785481314797,
+      "mean_shap": 0.0005569010444187855
+    }
+  ],
+  "figures": {
+    "shap_importance_bar.png": "reports\\figures\\shap_importance_bar.png",
+    "shap_summary.png": "reports\\figures\\shap_summary.png",
+    "shap_dependence_MonthlyCharges.png": "reports\\figures\\shap_dependence_MonthlyCharges.png",
+    "shap_dependence_tenure.png": "reports\\figures\\shap_dependence_tenure.png",
+    "shap_dependence_is_fiber_optic.png": "reports\\figures\\shap_dependence_is_fiber_optic.png"
+  },
+  "created_at": "2026-09-16T15:17:33+00:00"
+}

@@ -34,6 +34,7 @@ T-19, T-20 → T-21
 T-18 → T-22
 todas → T-23
 T-23 → T-24 → T-25 → T-26 → T-27
+T-14 → T-28 (explicabilidad del modelo)
 ```
 
 Nota: las particiones (`T-11`) se crean **antes** del pipeline de preprocessing
@@ -501,3 +502,33 @@ errores. `create_app` acepta un servicio inyectable y conserva
 - `api.py` delega en el servicio; los endpoints y códigos de error
   (`invalid_request`, `model_unavailable`, `internal_error`) no cambian.
 - Suite completa en verde; los tests existentes de la API siguen pasando.
+
+---
+
+### Fase 21 — Explicabilidad del modelo
+
+#### T-28
+
+**Descripción:** Implementar la explicabilidad global del modelo seleccionado
+(`T-14`) mediante valores SHAP: un módulo reproducible que carga el pipeline
+del modelo desde el Model Registry (alias `production`), calcula las
+atribuciones con `shap.LinearExplainer` sobre las features preprocesadas de la
+partición `validation` (`T-11`) y **agrupa las contribuciones de las columnas
+codificadas en su feature original** para un reporte interpretable. La
+explicación es descriptiva: no reentrena ni altera la selección, y `test`
+queda reservado a la evaluación única de `T-14`.
+
+**Dependencias:** T-14.
+
+**Criterio de completitud:**
+- Dependencia `shap` declarada en el entorno reproducible y regenerada en el
+  lock.
+- Módulo `src/modeling/explain.py` que carga el modelo con alias `production`,
+  calcula SHAP sobre `validation` y agrega las columnas one-hot a su feature
+  original, y escribe `reports/explainability.md`, `reports/explainability.json`
+  y las figuras en `reports/figures/`.
+- Etapa `explicabilidad` integrada al pipeline orquestado
+  (`src/serving/pipeline.py`) tras `seleccion`, ejecutable con un comando.
+- Pruebas unitarias que verifican el cálculo de SHAP, la agregación de columnas
+  codificadas y la generación de artefactos.
+- Suite completa en verde (`pytest`, `black`, `ruff`, `mypy`, `pre-commit`).

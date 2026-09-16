@@ -15,6 +15,7 @@ def test_stage_names_order_es_end_to_end():
         "entrenamiento",
         "tracking",
         "seleccion",
+        "explicabilidad",
         "prediccion",
     )
 
@@ -33,6 +34,7 @@ def test_run_pipeline_selects_subset_in_canonical_order():
         "entrenamiento": lambda: calls.append("entrenamiento"),
         "tracking": lambda: calls.append("tracking"),
         "seleccion": lambda: calls.append("seleccion"),
+        "explicabilidad": lambda: calls.append("explicabilidad"),
         "prediccion": lambda: calls.append("prediccion"),
     }
     with mock.patch(
@@ -80,6 +82,7 @@ def test_main_runs_only_requested_stages():
         ("stage_train", "src.modeling.train.main"),
         ("stage_tracking", "src.modeling.tracking.main"),
         ("stage_select", "src.modeling.select.main"),
+        ("stage_explain", "src.modeling.explain.main"),
         ("stage_predict", "src.serving.predict.main"),
     ],
 )

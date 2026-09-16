@@ -115,9 +115,26 @@ uv run python -m src.serving.pipeline features prediccion
 ```
 
 La ejecución regenera desde el raw versionado todos los artefactos (procesado,
-features, particiones, experimentos, tracking y modelos, selección y
-predicciones). Con los mismos datos y configuración los resultados son idénticos
-(semillas fijas); los artefactos se versionan en `data/predictions/`.
+features, particiones, experimentos, tracking y modelos, selección,
+explicabilidad y predicciones). Con los mismos datos y configuración los
+resultados son idénticos (semillas fijas); los artefactos se versionan en
+`data/predictions/`.
+
+### Explicabilidad del modelo (T-28)
+
+Genera el reporte de importancia de features del modelo seleccionado con SHAP
+(valores `LinearExplainer` sobre la partición de validación, agrupando las
+columnas codificadas en su feature original):
+
+```powershell
+uv run python -m src.modeling.explain
+```
+
+(o como etapa del pipeline: `uv run python -m src.serving.pipeline explicabilidad`).
+
+La salida es descriptiva: `reports/explainability.md`, `reports/explainability.json`
+y las figuras en `reports/figures/` (barra de importancia, summary plot y
+dependence de las features principales).
 
 ### Tracking de experimentos (T-17)
 
@@ -215,9 +232,10 @@ uv run mypy src
 
 ## Estado
 
-Sistema implementado de extremo a extremo (fases 1 a 19, T-01 a T-23). Las
-fases, dependencias y criterios de completitud se definen en `docs/tasks.md`;
-los reportes generados por cada fase viven en `reports/`.
+Sistema implementado de extremo a extremo (fases 1 a 19, T-01 a T-23, refactor
+de la capa de código T-24 a T-27 y explicabilidad del modelo T-28). Las fases,
+dependencias y criterios de completitud se definen en `docs/tasks.md`; los
+reportes generados por cada fase viven en `reports/`.
 
 ## Contacto
 
