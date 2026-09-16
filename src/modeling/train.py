@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import json
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
@@ -55,32 +56,48 @@ from src.paths import (
 )
 from src.seeds import RANDOM_SEED
 
-CANDIDATE_NAMES = ("logistic-regression", "random-forest")
+
+def _logistic_builder(seed: int, **overrides: Any) -> LogisticRegression:
+    params: dict[str, Any] = {
+        "class_weight": "balanced",
+        "max_iter": 2000,
+    }
+    params.update(overrides)
+    return LogisticRegression(random_state=seed, **params)
+
+
+def _forest_builder(seed: int, **overrides: Any) -> RandomForestClassifier:
+    params: dict[str, Any] = {
+        "n_estimators": 300,
+        "min_samples_leaf": 5,
+        "class_weight": "balanced",
+        "n_jobs": -1,
+    }
+    params.update(overrides)
+    return RandomForestClassifier(random_state=seed, **params)
+
+
+CANDIDATES: dict[str, Callable[..., Any]] = {
+    "logistic-regression": _logistic_builder,
+    "random-forest": _forest_builder,
+}
 
 
 def build_candidate(name: str, seed: int, **overrides: Any) -> Any:
     """Devuelve el estimador del candidato ``name`` con semilla ``seed``.
 
     ``overrides`` permite ajustar parámetros (p. ej. en tests) sin cambiar la
-    configuración por defecto del experimento.
+    configuración por defecto del experimento. Añadir un candidato nuevo solo
+    requiere registrar su constructor en ``CANDIDATES`` (OCP).
     """
-    if name == "logistic-regression":
-        params: dict[str, Any] = {
-            "class_weight": "balanced",
-            "max_iter": 2000,
-        }
-        params.update(overrides)
-        return LogisticRegression(random_state=seed, **params)
-    if name == "random-forest":
-        params = {
-            "n_estimators": 300,
-            "min_samples_leaf": 5,
-            "class_weight": "balanced",
-            "n_jobs": -1,
-        }
-        params.update(overrides)
-        return RandomForestClassifier(random_state=seed, **params)
-    raise ValueError(f"Candidato desconocido: {name}")
+    try:
+        builder = CANDIDATES[name]
+    except KeyError as exc:
+        raise ValueError(f"Candidato desconocido: {name}") from exc
+    return builder(seed, **overrides)
+
+
+CANDIDATE_NAMES = tuple(CANDIDATES)
 
 
 def prob_yes(pipeline: Pipeline, X: pd.DataFrame) -> np.ndarray:
