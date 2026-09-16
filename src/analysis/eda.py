@@ -20,14 +20,19 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from src.data.clean import sha256_file
 from src.data.contract import COLUMNS, TARGET
+from src.hashing import sha256_file
+from src.paths import (
+    EDA_REPORT as REPORT_FILE,
+)
+from src.paths import (
+    FIGURES_DIR,
+    PROJECT_ROOT,
+)
+from src.paths import (
+    PROCESSED_FILE as CLEANED_FILE,
+)
 from src.seeds import RANDOM_SEED
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-CLEANED_FILE = PROJECT_ROOT / "data" / "processed" / "churn_cleaned.csv"
-REPORT_FILE = PROJECT_ROOT / "reports" / "eda.md"
-FIGURES_DIR = PROJECT_ROOT / "reports" / "figures"
 
 NUMERIC_COLS = ("tenure", "MonthlyCharges", "TotalCharges")
 # `customerID` es identificador, no feature: se excluye del análisis.

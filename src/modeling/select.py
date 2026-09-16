@@ -32,8 +32,8 @@ import mlflow.sklearn
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from src.data.clean import sha256_file
 from src.data.contract import TARGET
+from src.hashing import sha256_file
 from src.modeling.baseline import evaluate_metrics
 from src.modeling.preprocessing import FEATURE_NAMES
 from src.modeling.tracking import (
@@ -44,13 +44,16 @@ from src.modeling.tracking import (
     _as_float,
 )
 from src.modeling.train import prob_yes
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-TEST_FILE = PROJECT_ROOT / "data" / "splits" / "test.csv"
-EXPERIMENTS_FILE = PROJECT_ROOT / "reports" / "experiments.json"
-SELECTION_JSON = PROJECT_ROOT / "reports" / "selection.json"
-SELECTION_MD = PROJECT_ROOT / "reports" / "selection.md"
-MODELS_DIR = PROJECT_ROOT / "data" / "models"
+from src.paths import (
+    EXPERIMENTS_JSON as EXPERIMENTS_FILE,
+)
+from src.paths import (
+    MODELS_DIR,
+    PROJECT_ROOT,
+    SELECTION_JSON,
+    SELECTION_MD,
+    TEST_FILE,
+)
 
 PRIMARY_METRIC = "auc_pr"
 TIEBREAK_METRIC = "recall_pos"

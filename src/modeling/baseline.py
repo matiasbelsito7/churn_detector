@@ -18,7 +18,6 @@ from __future__ import annotations
 import json
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -34,13 +33,18 @@ from sklearn.metrics import (
 )
 
 from src.data.contract import TARGET
+from src.paths import (
+    BASELINE_REPORT_JSON as REPORT_JSON,
+)
+from src.paths import (
+    BASELINE_REPORT_MD as REPORT_MD,
+)
+from src.paths import (
+    PROJECT_ROOT,
+    TRAIN_FILE,
+    VAL_FILE,
+)
 from src.seeds import RANDOM_SEED
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-TRAIN_FILE = PROJECT_ROOT / "data" / "splits" / "train.csv"
-VAL_FILE = PROJECT_ROOT / "data" / "splits" / "validation.csv"
-REPORT_MD = PROJECT_ROOT / "reports" / "baseline.md"
-REPORT_JSON = PROJECT_ROOT / "reports" / "baseline_metrics.json"
 
 POSITIVE = "Yes"
 ABSTAIN_THRESHOLD = 0.5

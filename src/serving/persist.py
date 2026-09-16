@@ -32,11 +32,19 @@ from typing import Any, cast
 
 import psycopg
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-PREDICTIONS_FILE = PROJECT_ROOT / "data" / "predictions" / "predictions.csv"
-LOG_FILE = PROJECT_ROOT / "data" / "predictions" / "prediction_log.json"
-REPORT_MD = PROJECT_ROOT / "reports" / "persistence.md"
-REPORT_JSON = PROJECT_ROOT / "reports" / "persistence.json"
+from src.paths import (
+    PERSISTENCE_REPORT_JSON as REPORT_JSON,
+)
+from src.paths import (
+    PERSISTENCE_REPORT_MD as REPORT_MD,
+)
+from src.paths import (
+    PREDICTION_LOG as LOG_FILE,
+)
+from src.paths import (
+    PREDICTIONS_FILE,
+    PROJECT_ROOT,
+)
 
 DB_HOST = os.environ.get("POSTGRES_HOST", "localhost")
 DB_PORT = int(os.environ.get("POSTGRES_PORT", "5432"))

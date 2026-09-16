@@ -18,20 +18,24 @@ import json
 import sys
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from pathlib import Path
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.analysis.features import FEATURE_COLUMNS
-from src.data.clean import sha256_file
 from src.data.contract import COLUMNS, TARGET
+from src.hashing import sha256_file
+from src.paths import (
+    FEATURES_FILE as INPUT_FILE,
+)
+from src.paths import (
+    PARTITION_LOG as LOG_FILE,
+)
+from src.paths import (
+    PROJECT_ROOT,
+    SPLITS_DIR,
+)
 from src.seeds import RANDOM_SEED
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-INPUT_FILE = PROJECT_ROOT / "data" / "features" / "churn_features.csv"
-SPLITS_DIR = PROJECT_ROOT / "data" / "splits"
-LOG_FILE = SPLITS_DIR / "partition_log.json"
 
 TRAIN_FRAC = 0.70
 VAL_FRAC = 0.15

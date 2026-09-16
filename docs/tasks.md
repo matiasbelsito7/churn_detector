@@ -33,6 +33,7 @@ T-15, T-18 → T-20
 T-19, T-20 → T-21
 T-18 → T-22
 todas → T-23
+T-23 → T-24 → T-25
 ```
 
 Nota: las particiones (`T-11`) se crean **antes** del pipeline de preprocessing
@@ -427,3 +428,43 @@ con instrucciones de uso, decisión de arquitectura y punto de contacto.
 - La documentación refleja fielmente el sistema implementado.
 - `README` contiene instrucciones de instalación, uso y arquitectura.
 - Los criterios de aceptación de `specs.md` se cumplen.
+
+---
+
+### Fase 20 — Refactor SOLID de la capa de código
+
+#### T-24
+
+**Descripción:** Centralizar la definición de rutas de archivos en
+`src/paths.py` y el cálculo de hashes (PEP 247) en `src/hashing.py`, eliminando
+las definiciones duplicadas de `PROJECT_ROOT` y los imports cruzados de
+`src.data.clean`. Cada módulo conserva sus nombres públicos de rutas (p. ej.
+`OUTPUT_FILE`, `LOG_FILE`, `REPORT_FILE`) como alias de las constantes
+canónicas, de modo que los tests que parchean atributos de módulo sigan
+funcionando sin cambios.
+
+**Dependencias:** T-23.
+
+**Criterio de completitud:**
+- `src/paths.py` define todas las rutas canónicas y `src/hashing.py` define
+  `sha256_file`.
+- Ningún módulo redefine `PROJECT_ROOT` ni importa hashing desde `src.data.clean`.
+- Suite completa en verde (pytest, black, ruff, mypy, pre-commit) sin modificar
+  el comportamiento de los módulos ni los nombres públicos usados por los tests.
+
+#### T-25
+
+**Descripción:** Aplicar OCP al entrenamiento de candidatos: en
+`src/modeling/train.py`, centralizar la selección de modelos en un registro
+(`CANDIDATES`) que mapea cada nombre de candidato a un constructor
+parametrizable, de modo que añadir un nuevo candidato no requiera modificar
+`build_candidate`. Conservar `CANDIDATE_NAMES` y `build_candidate` como API
+pública por compatibilidad con los tests y con `tracking.py`.
+
+**Dependencias:** T-24.
+
+**Criterio de completitud:**
+- `build_candidate(name, seed, **overrides)` resuelve el modelo desde
+  `CANDIDATES` y lanza `ValueError` para nombres desconocidos.
+- `CANDIDATE_NAMES` sigue disponible y refleja las claves del registro.
+- Suite completa en verde sin cambios de comportamiento en el entrenamiento.

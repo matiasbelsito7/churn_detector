@@ -22,18 +22,22 @@ from __future__ import annotations
 import json
 import sys
 from datetime import UTC, datetime
-from hashlib import sha256
-from pathlib import Path
 
 import pandas as pd
 
 from src.data.quality_checks import run_all
+from src.hashing import sha256_file
+from src.paths import (
+    PROCESSED_FILE as OUTPUT_FILE,
+)
+from src.paths import (
+    PROCESSING_LOG as LOG_FILE,
+)
+from src.paths import (
+    PROJECT_ROOT,
+    RAW_FILE,
+)
 from src.seeds import RANDOM_SEED
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-RAW_FILE = PROJECT_ROOT / "data" / "raw" / "Telco-Customer-Churn.csv"
-OUTPUT_FILE = PROJECT_ROOT / "data" / "processed" / "churn_cleaned.csv"
-LOG_FILE = PROJECT_ROOT / "data" / "processed" / "processing_log.json"
 
 STEPS = [
     "TotalCharges: celdas de solo espacios convertidas a ausencia (NaN) y "
@@ -56,14 +60,6 @@ def clean_raw(df: pd.DataFrame) -> pd.DataFrame:
     out["TotalCharges"] = out["TotalCharges"].fillna(0.0)
     out["SeniorCitizen"] = out["SeniorCitizen"].astype(int).map({0: "No", 1: "Yes"})
     return out
-
-
-def sha256_file(path: Path) -> str:
-    digest = sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def build_log(

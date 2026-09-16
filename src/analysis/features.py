@@ -19,19 +19,25 @@ from __future__ import annotations
 import json
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from src.data.clean import sha256_file
 from src.data.contract import COLUMNS, TARGET
+from src.hashing import sha256_file
+from src.paths import (
+    FEATURE_LOG as LOG_FILE,
+)
+from src.paths import (
+    FEATURES_FILE as OUTPUT_FILE,
+)
+from src.paths import (
+    PROCESSED_FILE as INPUT_FILE,
+)
+from src.paths import (
+    PROJECT_ROOT,
+)
 from src.seeds import RANDOM_SEED
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-INPUT_FILE = PROJECT_ROOT / "data" / "processed" / "churn_cleaned.csv"
-OUTPUT_FILE = PROJECT_ROOT / "data" / "features" / "churn_features.csv"
-LOG_FILE = PROJECT_ROOT / "data" / "features" / "feature_log.json"
 
 # Rangos de antigüedad alineados con la figura "Tasa de churn por antigüedad"
 # del EDA (T-09).

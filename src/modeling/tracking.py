@@ -33,7 +33,6 @@ from __future__ import annotations
 import json
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 import mlflow
@@ -48,13 +47,8 @@ from src.modeling.train import (
     CANDIDATE_NAMES,
     train_candidate,
 )
+from src.paths import MLFLOW_DB, PROJECT_ROOT, TRAIN_FILE, VAL_FILE
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-TRAIN_FILE = PROJECT_ROOT / "data" / "splits" / "train.csv"
-VAL_FILE = PROJECT_ROOT / "data" / "splits" / "validation.csv"
-
-MLFLOW_DB = PROJECT_ROOT / "mlflow.db"
-MLRUNS_DIR = PROJECT_ROOT / "mlruns"
 TRACKING_URI = f"sqlite:///{MLFLOW_DB.as_posix()}"
 
 EXPERIMENT_NAME = "churn-detector"

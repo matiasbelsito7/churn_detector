@@ -17,7 +17,6 @@ from __future__ import annotations
 import re
 import sys
 from dataclasses import dataclass
-from pathlib import Path
 
 import pandas as pd
 
@@ -26,10 +25,8 @@ from src.data.contract import (
     INTERNET_DEPENDENT_FIELDS,
     SPECS,
 )
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-RAW_FILE = PROJECT_ROOT / "data" / "raw" / "Telco-Customer-Churn.csv"
-REPORT_FILE = PROJECT_ROOT / "reports" / "quality_report.md"
+from src.paths import PROJECT_ROOT, RAW_FILE
+from src.paths import QUALITY_REPORT as REPORT_FILE
 
 CUSTOMER_ID_PATTERN = re.compile(r"^\d{4}-[A-Z]{5}$")
 

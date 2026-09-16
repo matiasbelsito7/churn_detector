@@ -10,15 +10,12 @@ No modifica el raw: solo lo lee y escribe el informe en `reports/`.
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 import pandas as pd
 
 from src.data.contract import COLUMNS, INTERNET_DEPENDENT_FIELDS, SPECS, TARGET
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-RAW_FILE = PROJECT_ROOT / "data" / "raw" / "Telco-Customer-Churn.csv"
-REPORT_FILE = PROJECT_ROOT / "reports" / "audit_raw.md"
+from src.paths import AUDIT_REPORT as REPORT_FILE
+from src.paths import PROJECT_ROOT, RAW_FILE
 
 TYPE_LABEL = {
     "id": "identificador",

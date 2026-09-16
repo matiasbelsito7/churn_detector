@@ -19,22 +19,28 @@ from __future__ import annotations
 import json
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from src.data.clean import sha256_file
+from src.hashing import sha256_file
 from src.modeling.preprocessing import FEATURE_NAMES
 from src.modeling.select import load_selected_model
 from src.modeling.train import prob_yes
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-FEATURES_FILE = PROJECT_ROOT / "data" / "features" / "churn_features.csv"
-OUTPUT_DIR = PROJECT_ROOT / "data" / "predictions"
-OUTPUT_FILE = OUTPUT_DIR / "predictions.csv"
-LOG_FILE = OUTPUT_DIR / "prediction_log.json"
+from src.paths import (
+    FEATURES_FILE,
+    PROJECT_ROOT,
+)
+from src.paths import (
+    PREDICTION_LOG as LOG_FILE,
+)
+from src.paths import (
+    PREDICTIONS_DIR as OUTPUT_DIR,
+)
+from src.paths import (
+    PREDICTIONS_FILE as OUTPUT_FILE,
+)
 
 PREDICTION_THRESHOLD = 0.5
 MODEL_OUTPUT_COLUMNS = ("customerID", "churn_prob", "churn_class")

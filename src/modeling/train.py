@@ -28,7 +28,6 @@ import json
 import sys
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -37,21 +36,24 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
-from src.data.clean import sha256_file
 from src.data.contract import POSITIVE_CLASS, TARGET
+from src.hashing import sha256_file
 from src.modeling.baseline import evaluate_metrics
 from src.modeling.preprocessing import (
     FEATURE_NAMES,
     build_preprocessing_pipeline,
 )
+from src.paths import (
+    EXPERIMENTS_JSON as EXPERIMENTS_FILE,
+)
+from src.paths import (
+    PROJECT_ROOT,
+    TEST_FILE,
+    TRAIN_FILE,
+    TRAINING_REPORT,
+    VAL_FILE,
+)
 from src.seeds import RANDOM_SEED
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-TRAIN_FILE = PROJECT_ROOT / "data" / "splits" / "train.csv"
-VAL_FILE = PROJECT_ROOT / "data" / "splits" / "validation.csv"
-TEST_FILE = PROJECT_ROOT / "data" / "splits" / "test.csv"
-EXPERIMENTS_FILE = PROJECT_ROOT / "reports" / "experiments.json"
-TRAINING_REPORT = PROJECT_ROOT / "reports" / "training.md"
 
 CANDIDATE_NAMES = ("logistic-regression", "random-forest")
 

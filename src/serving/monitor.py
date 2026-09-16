@@ -41,18 +41,25 @@ from typing import cast
 import numpy as np
 import pandas as pd
 
-from src.data.clean import sha256_file
 from src.data.contract import TARGET
+from src.hashing import sha256_file
 from src.modeling.baseline import evaluate_metrics
 from src.modeling.preprocessing import CATEGORIC_FEATURE_NAMES, NUMERIC_FEATURE_NAMES
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-TRAIN_FILE = PROJECT_ROOT / "data" / "splits" / "train.csv"
-FEATURES_FILE = PROJECT_ROOT / "data" / "features" / "churn_features.csv"
-PREDICTIONS_FILE = PROJECT_ROOT / "data" / "predictions" / "predictions.csv"
-SELECTION_FILE = PROJECT_ROOT / "reports" / "selection.json"
-REPORT_MD = PROJECT_ROOT / "reports" / "monitoring.md"
-REPORT_JSON = PROJECT_ROOT / "reports" / "monitoring.json"
+from src.paths import (
+    FEATURES_FILE,
+    PREDICTIONS_FILE,
+    PROJECT_ROOT,
+    TRAIN_FILE,
+)
+from src.paths import (
+    MONITORING_REPORT_JSON as REPORT_JSON,
+)
+from src.paths import (
+    MONITORING_REPORT_MD as REPORT_MD,
+)
+from src.paths import (
+    SELECTION_JSON as SELECTION_FILE,
+)
 
 MONITOR_REFERENCE_FEATURES = os.environ.get("MONITOR_REFERENCE_FEATURES", "")
 MONITOR_CURRENT_FEATURES = os.environ.get(
