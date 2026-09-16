@@ -12,7 +12,14 @@ from src.modeling.preprocessing import (
     NUMERIC_FEATURE_NAMES,
     build_preprocessing_pipeline,
 )
-from src.serving.api import HEALTH_ENDPOINT, PREDICT_ENDPOINT, create_app
+from src.serving.api import (
+    HEALTH_ENDPOINT,
+    PREDICT_ENDPOINT,
+    PredictionRequest,
+    _payload_to_frame,
+    create_app,
+)
+from src.serving.prediction_service import PredictionService
 
 
 def fake_model() -> Pipeline:
@@ -146,12 +153,12 @@ def test_health_available_without_model(client_without_model: TestClient) -> Non
 
 
 def test_predict_internal_error_hides_details(client: TestClient, monkeypatch) -> None:
-    import src.serving.api as api_module
+    import src.serving.prediction_service as service_module
 
     def boom(model, df, *args, **kwargs):
         raise ValueError("no se debe exponer este detalle")
 
-    monkeypatch.setattr(api_module, "predict_clients", boom)
+    monkeypatch.setattr(service_module, "predict_clients", boom)
     resp = client.post(PREDICT_ENDPOINT, json=payload())
     assert resp.status_code == 500
     body = resp.json()
@@ -191,3 +198,29 @@ def test_default_load_pipeline_missing_file_raises(monkeypatch, tmp_path) -> Non
 
     with pytest.raises(FileNotFoundError):
         api_module._default_load_pipeline()
+
+
+def test_prediction_service_loads_model_once(tmp_path) -> None:
+    import joblib
+
+    model_file = tmp_path / "model.joblib"
+    dump(fake_model(), model_file)
+    calls = []
+
+    def load_pipeline():
+        calls.append(True)
+        return joblib.load(model_file)
+
+    service = PredictionService(load_pipeline=load_pipeline)
+    frame = _payload_to_frame(PredictionRequest(**VALID_PAYLOAD))
+    service.predict(frame)
+    service.predict(frame)
+    assert len(calls) == 1
+
+
+def test_prediction_service_output_columns():
+    service = PredictionService(load_pipeline=fake_model)
+    frame = _payload_to_frame(PredictionRequest(**VALID_PAYLOAD))
+    out = service.predict(frame)
+    assert list(out.columns) == ["customerID", "churn_prob", "churn_class"]
+    assert out.iloc[0]["customerID"] == VALID_PAYLOAD["customerID"]

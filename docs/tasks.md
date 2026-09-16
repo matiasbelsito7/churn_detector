@@ -33,7 +33,7 @@ T-15, T-18 → T-20
 T-19, T-20 → T-21
 T-18 → T-22
 todas → T-23
-T-23 → T-24 → T-25
+T-23 → T-24 → T-25 → T-26 → T-27
 ```
 
 Nota: las particiones (`T-11`) se crean **antes** del pipeline de preprocessing
@@ -468,3 +468,36 @@ pública por compatibilidad con los tests y con `tracking.py`.
   `CANDIDATES` y lanza `ValueError` para nombres desconocidos.
 - `CANDIDATE_NAMES` sigue disponible y refleja las claves del registro.
 - Suite completa en verde sin cambios de comportamiento en el entrenamiento.
+
+#### T-26
+
+**Descripción:** Aplicar OCP a los checks de calidad de datos: en
+`src/data/quality_checks.py`, centralizar la ejecución de reglas en un
+registro (`CHECKS`) que mapea cada `rule_id` a su función de validación, de
+modo que añadir una regla nueva no requiera modificar `run_all`. Conservar
+`run_all` y `build_report` como API pública.
+
+**Dependencias:** T-24.
+
+**Criterio de completitud:**
+- `run_all` ejecuta únicamente los checks registrados en `CHECKS`, en orden.
+- `run_all` y `build_report` mantienen su firma y comportamiento.
+- Suite completa en verde sin cambios de comportamiento en los checks.
+
+#### T-27
+
+**Descripción:** Aplicar responsabilidad única y delegación al servicio de
+predicción: extraer la lógica de inferencia a `src/serving/prediction_service.py`
+(`PredictionService` con carga lazy del modelo y método `predict`), dejando a
+`src/serving/api.py` solo la validación del contrato HTTP y el manejo de
+errores. `create_app` acepta un servicio inyectable y conserva
+`load_pipeline`/`threshold` por compatibilidad.
+
+**Dependencias:** T-25.
+
+**Criterio de completitud:**
+- `PredictionService` encapsula feature engineering + predicción y carga el
+  modelo una única vez.
+- `api.py` delega en el servicio; los endpoints y códigos de error
+  (`invalid_request`, `model_unavailable`, `internal_error`) no cambian.
+- Suite completa en verde; los tests existentes de la API siguen pasando.

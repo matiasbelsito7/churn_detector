@@ -1,13 +1,13 @@
-"""API de predicción de churn con FastAPI (T-18).
+"""API de predicción de churn con FastAPI (T-18, refactor T-27).
 
 Cumple `docs/specs.md` §8.2:
 
 - `GET /health`: disponibilidad del servicio.
 - `POST /predict`: predicción por cliente. Recibe los campos del esquema
-  procesado (`docs/data_contract.md`), aplica el mismo feature engineering que
-  en entrenamiento (`T-10`) y devuelve identificador, probabilidad de churn y
-  clase predicha usando el modelo seleccionado (`T-14`) con su pipeline,
-  cargado desde el Model Registry de MLflow (`T-17`).
+  procesado (`docs/data_contract.md`), delega en `PredictionService` (que
+  aplica el mismo feature engineering que en entrenamiento, `T-10`, con el
+  pipeline del modelo seleccionado, `T-14`, cargado desde MLflow/almacén) y
+  devuelve identificador, probabilidad de churn y clase predicha.
 
 Los errores son explícitos y no exponen detalles internos: entrada inválida
 devuelve un código `invalid_request` con mención de los campos, y una
@@ -33,9 +33,9 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sklearn.pipeline import Pipeline
 
-from src.analysis.features import engineer_features
 from src.modeling.select import load_selected_model
-from src.serving.predict import PREDICTION_THRESHOLD, predict_clients
+from src.serving.predict import PREDICTION_THRESHOLD
+from src.serving.prediction_service import PredictionService
 
 logger = logging.getLogger(__name__)
 
@@ -142,10 +142,10 @@ def _validation_errors(exc: RequestValidationError) -> list[dict[str, str]]:
 
 
 def _load_model(state: Any) -> Pipeline:
-    """Carga el modelo desde el Model Registry (una única vez por proceso)."""
+    """Fuerza la carga del modelo a través del servicio (una única vez)."""
     if state.model is None:
         try:
-            state.model = state.load_pipeline()
+            state.model = state.service.model
         except Exception:
             logger.exception("No se pudo cargar el modelo seleccionado")
             raise ApiError(
@@ -159,8 +159,9 @@ def _load_model(state: Any) -> Pipeline:
 def create_app(
     load_pipeline: Callable[[], Pipeline] | None = None,
     threshold: float = PREDICTION_THRESHOLD,
+    service: PredictionService | None = None,
 ) -> FastAPI:
-    """Construye la app. Permite inyectar el cargador del modelo en pruebas."""
+    """Construye la app. Permite inyectar el cargador o el servicio completo."""
     app = FastAPI(
         title="Churn Detector API",
         description=(
@@ -169,9 +170,11 @@ def create_app(
         ),
         version="0.1.0",
     )
-    app.state.load_pipeline = load_pipeline or _default_load_pipeline
+    app.state.service = service or PredictionService(
+        load_pipeline=load_pipeline or _default_load_pipeline,
+        threshold=threshold,
+    )
     app.state.model = None
-    app.state.threshold = threshold
 
     @app.get(HEALTH_ENDPOINT)
     def health() -> dict[str, str]:
@@ -180,9 +183,8 @@ def create_app(
     @app.post(PREDICT_ENDPOINT, response_model=PredictionResponse)
     def predict(payload: PredictionRequest, request: Request) -> PredictionResponse:
         df = _payload_to_frame(payload)
-        df = engineer_features(df)
-        model = _load_model(request.app.state)
-        out = predict_clients(model, df, threshold=request.app.state.threshold)
+        _load_model(request.app.state)
+        out = request.app.state.service.predict(df)
         row = out.iloc[0]
         return PredictionResponse(
             customerID=str(row["customerID"]),
