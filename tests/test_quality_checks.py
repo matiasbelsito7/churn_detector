@@ -2,7 +2,7 @@
 
 import pandas as pd
 from src.data.contract import COLUMNS
-from src.data.quality_checks import build_report, run_all
+from src.data.quality_checks import CHECKS, build_report, check_no_duplicates, run_all
 
 
 def valid_df() -> pd.DataFrame:
@@ -38,6 +38,21 @@ def by_rule(df: pd.DataFrame) -> dict[str, bool]:
 
 def test_all_checks_pass_on_valid_dataset():
     assert all(by_rule(valid_df()).values())
+
+
+def test_run_all_delegates_to_catalog_and_is_extensible():
+    ids = [rule_id for rule_id, _ in CHECKS]
+    assert ids == ["R1", "R2", "R3", "R4", "R5", "R6", "R7"]
+    results = run_all(valid_df())
+    assert [r.rule_id for r in results] == ids
+
+    catalogue_check = CHECKS[-1][1]
+    assert catalogue_check(valid_df()).passed
+
+
+def test_check_catalog_contains_expected_functions():
+    functions = [check for _, check in CHECKS]
+    assert check_no_duplicates in functions
 
 
 def test_schema_fails_when_column_order_changes():

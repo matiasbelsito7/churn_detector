@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import re
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import pandas as pd
@@ -194,16 +195,24 @@ def check_missing_totalcharges(df: pd.DataFrame) -> CheckResult:
     )
 
 
+CHECKS: tuple[tuple[str, Callable[[pd.DataFrame], CheckResult]], ...] = (
+    ("R1", check_schema),
+    ("R2", check_domains),
+    ("R3", check_numeric),
+    ("R4", check_unique_ids),
+    ("R5", check_no_duplicates),
+    ("R6", check_coherence),
+    ("R7", check_missing_totalcharges),
+)
+
+
 def run_all(df: pd.DataFrame) -> list[CheckResult]:
-    return [
-        check_schema(df),
-        check_domains(df),
-        check_numeric(df),
-        check_unique_ids(df),
-        check_no_duplicates(df),
-        check_coherence(df),
-        check_missing_totalcharges(df),
-    ]
+    """Ejecuta, en orden, todos los checks registrados en ``CHECKS`` (OCP).
+
+    Añadir una regla nueva no toca esta función: se define el check y se
+    registra en ``CHECKS``.
+    """
+    return [check(df) for _rule_id, check in CHECKS]
 
 
 def build_report(results: list[CheckResult], source: str) -> str:
