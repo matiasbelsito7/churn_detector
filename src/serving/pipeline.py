@@ -11,8 +11,10 @@ Etapas (orden):
 4. `entrenamiento`: candidatos y registro JSON (`src.modeling.train`).
 5. `tracking`: candidatos registrados en MLflow (`src.modeling.tracking`).
 6. `seleccion`: modelo elegido y promovido (`src.modeling.select`).
-7. `explicabilidad`: reporte SHAP del modelo seleccionado (`src.modeling.explain`).
-8. `prediccion`: salida de inferencia para todos los clientes
+7. `adopcion`: se aplica la configuración ganadora de `T-29` si mejora la
+   evaluación (`src.modeling.adopt`, T-30).
+8. `explicabilidad`: reporte SHAP del modelo seleccionado (`src.modeling.explain`).
+9. `prediccion`: salida de inferencia para todos los clientes
    (`src.serving.predict`).
 
 Reproducibilidad: todas las etapas usan entradas versionadas, semillas fijas y
@@ -66,6 +68,12 @@ def stage_select() -> None:
     select.main()
 
 
+def stage_adopt() -> None:
+    from src.modeling import adopt
+
+    adopt.main()
+
+
 def stage_explain() -> None:
     from src.modeling import explain
 
@@ -85,6 +93,7 @@ PIPELINE_STAGES: tuple[tuple[str, Callable[[], None]], ...] = (
     ("entrenamiento", stage_train),
     ("tracking", stage_tracking),
     ("seleccion", stage_select),
+    ("adopcion", stage_adopt),
     ("explicabilidad", stage_explain),
     ("prediccion", stage_predict),
 )

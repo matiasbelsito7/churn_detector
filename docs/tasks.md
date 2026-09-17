@@ -35,6 +35,8 @@ T-18 → T-22
 todas → T-23
 T-23 → T-24 → T-25 → T-26 → T-27
 T-14 → T-28 (explicabilidad del modelo)
+T-13 → T-29 (exploración de hiperparámetros)
+T-29 → T-30 (adopción de configuración ganadora; resuelta: descartar, evidencia en `T-30`)
 ```
 
 Nota: las particiones (`T-11`) se crean **antes** del pipeline de preprocessing
@@ -532,3 +534,62 @@ queda reservado a la evaluación única de `T-14`.
 - Pruebas unitarias que verifican el cálculo de SHAP, la agregación de columnas
   codificadas y la generación de artefactos.
 - Suite completa en verde (`pytest`, `black`, `ruff`, `mypy`, `pre-commit`).
+
+---
+
+### Fase 22 — Optimización de hiperparámetros
+
+#### T-29
+
+**Descripción:** Explorar el espacio de hiperparámetros de los candidatos de
+`T-13` (logistic-regression, random-forest y xgboost) para informar la
+selección de `T-14`, siguiendo la estrategia **estructurada**: un barrido
+univariado (un parámetro a la vez con el resto en default) y una **búsqueda
+aleatoria conjunta** con semilla fija y presupuesto por familia. Toda la
+evaluación se realiza sobre `validation` con las métricas del problema
+(AUC-PR primaria, recall como desempate); `test` queda reservado a la
+evaluación única de `T-14`.
+
+**Dependencias:** T-13.
+
+**Criterio de completitud:**
+- Módulos reproducibles `src/modeling/grid_search.py` y
+  `src/modeling/explore_hyperparams.py`, ejecutables por línea de comandos y
+  con semilla fija (misma ejecución → mismos resultados).
+- Dependencia `xgboost` declarada en el entorno reproducible; el candidato se
+  integra vía el registro `CANDIDATES` de `T-25` sin alterar `build_candidate`.
+- Reportes versionados `reports/grid_search.md/.json` y
+  `reports/hyperparams_exploration.md/.json` con tabla comparativa por familia,
+  mejor configuración por barrido y mejor configuración global.
+- `test` no se utiliza en ninguna etapa de la exploración (verificable por
+  diseño y revisión).
+- Suite completa en verde (`pytest`, `black`, `ruff`, `mypy`, `pre-commit`) y
+  sin cambios en el comportamiento de la configuración de producción.
+
+#### T-30
+
+**Descripción:** Decidir, con la evidencia de `T-29`, si se adopta la mejor
+configuración encontrada como modelo de producción. La exploración localiza en
+`logistic-regression` (aleatorio) una ganancia marginal sobre el default de
+`T-14` (AUC-PR 0.6838 vs 0.6686 sobre `validation` mantenimiento el recall);
+de adoptarse, implica reentrenar el candidato, re-registrar modelo y
+experimentos en MLflow (`T-17`) y re-evaluar la selección (`T-14`) con el
+criterio de `specs.md` sección 7, manteniendo `test` como evaluación única.
+
+**Dependencias:** T-29.
+
+**Criterio de completitud:**
+- Decisión documentada en `reports/selection.md` (adoptar o descartar) con la
+  evidencia de `T-29` y la justificación alineada al criterio de selección.
+- Si se adopta: la configuración consta en `docs/specs.md`, el modelo y las
+  métricas quedan registrados en MLflow y el pipeline orquestado (`T-15`)
+  produce el artefacto de inference con la nueva configuración.
+- `test` se evalúa una única vez contra la configuración adoptada.
+- Suite completa en verde (`pytest`, `black`, `ruff`, `mypy`, `pre-commit`).
+
+**Resolución:** la configuración candidata de `T-29` superó al champion sobre
+`validation` (AUC-PR 0.6838 vs 0.6686) y fue adoptada, pero la evaluación
+sobre `test` mostró que la mejora no generaliza (AUC-PR 0.6338 vs 0.6698 del
+champion); la adopción se revirtió y el champion de `T-14` se mantiene como
+configuración de producción. Decisión y evidencia en `reports/adoption.md` y
+`reports/selection.md` (`src/modeling/adopt.py`, incluye reversión `--revert`).

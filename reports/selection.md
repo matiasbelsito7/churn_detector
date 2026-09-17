@@ -27,3 +27,12 @@ Matriz de confusión (umbral 0.5):
 - TP=226, FN=54, FP=223, TN=554.
 
 Auditabilidad: experimento `churn-detector` en el tracking de MLflow (candidatos con su configuración, métricas y artefactos); modelo `churn-logistic-regression` con alias `production`. El registro en `reports/experiments.json` conserva la trazabilidad de datos.
+
+---
+---
+
+## Reversión de adopción (T-30)
+
+El candidato adoptado en `T-30` no superó al champion anterior sobre `test` (AUC-PR peor); la adopción se revirtió y el champion volvió a la configuración por defecto de `T-14`. Detalle y evidencia: `reports/adoption.md`.
+
+Champion vigente: `churn-logistic-regression` v3.

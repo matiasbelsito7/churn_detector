@@ -1,0 +1,79 @@
+{
+  "task": "T-30",
+  "candidate": "logistic-regression",
+  "candidate_params": {
+    "C": 0.01,
+    "class_weight": "balanced",
+    "l1_ratio": 1.0,
+    "solver": "saga"
+  },
+  "selection_rule": "Métrica primaria: AUC-PR sobre la clase `Yes`; desempate por recall sobre `Yes`. Métricas adecuadas al problema desbalanceado (specs.md §7).",
+  "decision": "descartar",
+  "basis": "test",
+  "because": "El candidato superó al champion sobre validation pero obtuvo peores métricas sobre test; la mejora no generalizó y se revirtió la adopción.",
+  "validation": {
+    "champion-default": {
+      "auc_roc": 0.8420680926000661,
+      "auc_pr": 0.66857447884987,
+      "recall_pos": 0.8042704626334519,
+      "precision_pos": 0.5055928411633109,
+      "f1_pos": 0.6208791208791209,
+      "accuracy": 0.738883632923368,
+      "true_positive": 226,
+      "false_positive": 221,
+      "false_negative": 55,
+      "true_negative": 555
+    },
+    "candidate-t30": {
+      "auc_roc": 0.8445468136625454,
+      "auc_pr": 0.6837888630328585,
+      "recall_pos": 0.800711743772242,
+      "precision_pos": 0.5022321428571429,
+      "f1_pos": 0.6172839506172839,
+      "accuracy": 0.7360454115421002,
+      "true_positive": 225,
+      "false_positive": 223,
+      "false_negative": 56,
+      "true_negative": 553
+    }
+  },
+  "test": {
+    "champion": {
+      "auc_roc": 0.8560466078323221,
+      "auc_pr": 0.6698278978158965,
+      "recall_pos": 0.8071428571428572,
+      "precision_pos": 0.5033407572383074,
+      "f1_pos": 0.6200274348422496,
+      "accuracy": 0.7379375591296121,
+      "true_positive": 226,
+      "false_positive": 223,
+      "false_negative": 54,
+      "true_negative": 554
+    },
+    "candidate-rejected": {
+      "auc_roc": 0.838566372494944,
+      "auc_pr": 0.6338431791768724,
+      "recall_pos": 0.8035714285714286,
+      "precision_pos": 0.4923413566739606,
+      "f1_pos": 0.6105834464043419,
+      "accuracy": 0.7284768211920529,
+      "true_positive": 225,
+      "false_positive": 232,
+      "false_negative": 55,
+      "true_negative": 545
+    }
+  },
+  "test_improvement": {
+    "auc_pr": -0.03598471863902408,
+    "recall_pos": -0.0035714285714285587
+  },
+  "reverted_to": {
+    "version": 3
+  },
+  "evidence": "reports/hyperparams_exploration.md",
+  "inputs": {
+    "train_sha256": "9b7a38ce93a246b260abce0bfa8f0c640f58d1bbb3441964a8f8b8506a5a63b2",
+    "validation_sha256": "5011d2f9916daf6f9a106757b07e7fb71ecc8b4a00b91587d1176079a59466d7"
+  },
+  "created_at": "2026-09-17T05:40:08+00:00"
+}

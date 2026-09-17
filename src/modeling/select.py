@@ -82,8 +82,17 @@ def load_selected_model(name: str, tracking_uri: str = TRACKING_URI) -> Pipeline
     return mlflow.sklearn.load_model(f"models:/{MODEL_PREFIX}{name}@production")
 
 
-def promote_model(name: str, tracking_uri: str = TRACKING_URI) -> int:
-    """Promueve la última versión registrada de ``name`` al alias `production`."""
+def promote_model(
+    name: str,
+    tracking_uri: str = TRACKING_URI,
+    version: int | None = None,
+) -> int:
+    """Promueve una versión al alias `production`.
+
+    Sin ``version``, promueve la última versión registrada de ``name``; con
+    ``version`` explícita, promueve esa versión (útil para revertir cambios).
+    Devuelve el número de versión promovido.
+    """
     mlflow.set_tracking_uri(tracking_uri)
     client = mlflow.tracking.MlflowClient()
     versions = client.search_model_versions(f"name='{MODEL_PREFIX}{name}'")
@@ -91,9 +100,23 @@ def promote_model(name: str, tracking_uri: str = TRACKING_URI) -> int:
         raise ValueError(
             f"No hay versiones registradas para el modelo {MODEL_PREFIX}{name}"
         )
-    version = max(versions, key=lambda v: int(v.version)).version
-    client.set_registered_model_alias(MODEL_PREFIX + name, "production", version)
-    return int(version)
+    if version is None:
+        active = [
+            v for v in versions if getattr(v, "current_stage", "None") != "Archived"
+        ]
+        if not active:
+            raise ValueError(
+                f"No hay versiones activas para el modelo {MODEL_PREFIX}{name}"
+            )
+        target = max(active, key=lambda v: int(v.version)).version
+    else:
+        if not any(int(v.version) == version for v in versions):
+            raise ValueError(
+                f"No hay versión {version} para el modelo {MODEL_PREFIX}{name}"
+            )
+        target = str(version)
+    client.set_registered_model_alias(MODEL_PREFIX + name, "production", target)
+    return int(target)
 
 
 def log_selection_run(
@@ -102,11 +125,12 @@ def log_selection_run(
     metrics: dict[str, object],
     tracking_uri: str = TRACKING_URI,
     experiment_name: str = EXPERIMENT_NAME,
+    run_name: str | None = None,
 ) -> str:
     """Registra en el tracking la corrida de evaluación del modelo seleccionado."""
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(experiment_name)
-    with mlflow.start_run(run_name=f"seleccion-{name}"):
+    with mlflow.start_run(run_name=run_name or f"seleccion-{name}"):
         mlflow.log_params(
             {
                 "selected_candidate": name,

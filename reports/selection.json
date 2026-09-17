@@ -1,7 +1,4 @@
 {
-  "task": "T-14",
-  "selection_rule": "Métrica primaria: AUC-PR sobre la clase `Yes`; desempate por recall sobre `Yes`. Métricas adecuadas al problema desbalanceado (specs.md §7).",
-  "selected": "logistic-regression",
   "version": 3,
   "validation": {
     "logistic-regression": {
@@ -29,11 +26,6 @@
       "true_negative": 580
     }
   },
-  "test_file": {
-    "path": "data\\splits\\test.csv",
-    "sha256": "7f1688151384d94b7dba71461511ef3035a78dc2ee0b5d45f6bed63d69a8c241",
-    "size": 1057
-  },
   "test_metrics": {
     "auc_roc": 0.8560466078323221,
     "auc_pr": 0.6698278978158965,
@@ -46,15 +38,36 @@
     "false_negative": 54,
     "true_negative": 554
   },
-  "registry": {
-    "model": "churn-logistic-regression",
-    "alias": "production",
-    "experiment": "churn-detector",
-    "tracking_uri": "sqlite:///C:/Users/Manaus/PROYECTOS/churn_detector/mlflow.db"
-  },
+  "created_at": "2026-09-17T05:40:08+00:00",
+  "updated_by": "T-30 (revertido)",
   "artifact": {
     "path": "data\\models\\churn-logistic-regression.joblib",
     "standalone": true
   },
-  "created_at": "2026-09-15T16:47:20+00:00"
+  "test_file": {
+    "path": "data\\splits\\test.csv",
+    "sha256": "7f1688151384d94b7dba71461511ef3035a78dc2ee0b5d45f6bed63d69a8c241",
+    "size": 1057
+  },
+  "rejected_attempt": {
+    "version": 4,
+    "params": {
+      "C": 0.01,
+      "class_weight": "balanced",
+      "l1_ratio": 1.0,
+      "solver": "saga"
+    },
+    "test_metrics": {
+      "auc_roc": 0.838566372494944,
+      "auc_pr": 0.6338431791768724,
+      "recall_pos": 0.8035714285714286,
+      "precision_pos": 0.4923413566739606,
+      "f1_pos": 0.6105834464043419,
+      "accuracy": 0.7284768211920529,
+      "true_positive": 225,
+      "false_positive": 232,
+      "false_negative": 55,
+      "true_negative": 545
+    }
+  }
 }
