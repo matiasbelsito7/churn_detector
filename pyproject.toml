@@ -17,6 +17,7 @@ dependencies = [
     "psycopg[binary]>=3.1",
     "fastapi>=0.115",
     "uvicorn>=0.30",
+    "xgboost>=3.2.0",
 ]
 
 [project.optional-dependencies]

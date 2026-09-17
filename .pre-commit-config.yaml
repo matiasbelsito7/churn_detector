@@ -21,3 +21,5 @@ repos:
         args: ["src"]
         additional_dependencies:
           - pandas==2.*
+          - numpy
+          - xgboost

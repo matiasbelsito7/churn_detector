@@ -1,8 +1,8 @@
 """Entrenamiento de candidatos de modelo bajo condiciones idénticas (T-13).
 
-Entrena al menos dos familias de modelo distintas (regresión logística y
-random forest) sobre la partición de `train` (T-11) y el pipeline de
-preprocessing de `T-12`, evaluándolas sobre la misma partición de
+Entrena al menos tres familias de modelo distintas (regresión logística,
+random forest y xgboost) sobre la partición de `train` (T-11) y el pipeline
+de preprocessing de `T-12`, evaluándolas sobre la misma partición de
 `validation` y con las mismas métricas definidas en `docs/specs.md` (§7) y el
 baseline de `T-11`.
 
@@ -36,6 +36,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelEncoder
+from xgboost import XGBClassifier
 
 from src.data.contract import POSITIVE_CLASS, TARGET
 from src.hashing import sha256_file
@@ -77,9 +79,60 @@ def _forest_builder(seed: int, **overrides: Any) -> RandomForestClassifier:
     return RandomForestClassifier(random_state=seed, **params)
 
 
+class _LabelEncodedXGBClassifier(XGBClassifier):
+    """XGBClassifier (xgboost>=3) que acepta el target `No`/`Yes` del proyecto.
+
+    `xgboost>=3` no codifica etiquetas de clase automáticamente y espera un
+    target numérico. Este wrapper codifica `No`/`Yes` con `LabelEncoder` al
+    ajustar y expone `classes_` con las etiquetas originales después del
+    ajuste, de modo que `prob_yes` y las métricas interactúan con él igual que
+    con el resto de candidatos. Internamente (`_fitted_ == False`) mantiene la
+    convención numérica que xgboost usa durante `fit`.
+
+    `xgboost>=3` ya no consume `class_weight`; este wrapper lo respeta
+    traduciéndolo a `scale_pos_weight` (parámetro nativo) y lo retira de los
+    parámetros que se envían al booster.
+    """
+
+    def fit(self, X: Any, y: Any, **kwargs: Any) -> _LabelEncodedXGBClassifier:
+        class_weight = getattr(self, "kwargs", {}).get("class_weight")
+        if class_weight == "balanced" and self.scale_pos_weight is None:
+            positive = int((np.asarray(y) == POSITIVE_CLASS).sum())
+            negative = int(len(y) - positive)
+            self.scale_pos_weight = negative / max(positive, 1)
+        if hasattr(self, "kwargs") and "class_weight" in self.kwargs:
+            self.kwargs.pop("class_weight")
+        self._encoder = LabelEncoder().fit(y)
+        super().fit(X, self._encoder.transform(y), **kwargs)
+        self._fitted_ = True
+        return self
+
+    @property
+    def classes_(self) -> np.ndarray:
+        if getattr(self, "_fitted_", False):
+            return self._encoder.classes_
+        return super().classes_
+
+
+def _xgboost_builder(seed: int, **overrides: Any) -> _LabelEncodedXGBClassifier:
+    params: dict[str, Any] = {
+        "n_estimators": 300,
+        "max_depth": 5,
+        "learning_rate": 0.075,
+        "subsample": 1.0,
+        "tree_method": "hist",
+        "class_weight": "balanced",
+        "eval_metric": "logloss",
+        "n_jobs": -1,
+    }
+    params.update(overrides)
+    return _LabelEncodedXGBClassifier(random_state=seed, **params)
+
+
 CANDIDATES: dict[str, Callable[..., Any]] = {
     "logistic-regression": _logistic_builder,
     "random-forest": _forest_builder,
+    "xgboost": _xgboost_builder,
 }
 
 

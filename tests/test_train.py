@@ -5,6 +5,9 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.base import BaseEstimator
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from src.data.contract import TARGET
 from src.modeling import train
 from src.modeling.train import (
@@ -14,6 +17,7 @@ from src.modeling.train import (
     experiment_record,
     train_candidate,
 )
+from xgboost import XGBClassifier
 
 
 def make_df(n: int, seed: int) -> pd.DataFrame:
@@ -75,8 +79,11 @@ def test_two_distinct_candidates_defined():
 def test_build_candidate_known_names():
     logistic = build_candidate("logistic-regression", seed=1)
     forest = build_candidate("random-forest", seed=1)
-    assert type(logistic).__name__ == "LogisticRegression"
-    assert type(forest).__name__ == "RandomForestClassifier"
+    xgb = build_candidate("xgboost", seed=1)
+    assert isinstance(logistic, LogisticRegression)
+    assert isinstance(forest, RandomForestClassifier)
+    assert isinstance(xgb, XGBClassifier)
+    assert isinstance(xgb, BaseEstimator)
 
 
 def test_build_candidate_unknown_name_raises():
